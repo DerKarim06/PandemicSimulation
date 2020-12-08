@@ -25,7 +25,7 @@ class Presenter(QtCore.QObject):
         if self.isSimulationRunning:
             self.simulation.performStep()
             self.ui.updateScene(self.simulation.getScene())
-            self.ui.updateData(self.simulation.getData())
+            # self.ui.updateData(self.simulation.getData())
 
     def startSimulation(self):
         self.isSimulationRunning = True
@@ -33,6 +33,19 @@ class Presenter(QtCore.QObject):
         self.simulation = Simulation()
         self.ui.startSimulation()
 
+    def pauseSimulation(self):
+        self.isSimulationRunning = False
+        print("Hello World from Presenter")
+        self.ui.pauseSimulation()
+
+    def resetSimulation(self):
+        self.isSimulationRunning = False
+        self.simulation = None
+        print("Hello World from Presenter")
+        self.ui.resetSimulation()
+
     def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
+        self.ui.pauseSimulationSignal.connect(self.pauseSimulation)
+        self.ui.resetSimulationSignal.connect(self.resetSimulation)

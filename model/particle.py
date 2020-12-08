@@ -1,25 +1,41 @@
 from PyQt5 import QtGui
-from PyQt5.QtGui import QPainterPath
+from PyQt5.QtGui import QPainterPath, QColor, QPen, QBrush
 from PyQt5.QtWidgets import QGraphicsItem
 from PyQt5.QtCore import Qt, QRectF
+from matplotlib.patches import Shadow
 
 
 class Particle(QGraphicsItem):
+    def __init__(self, x, y):
+        super(Particle, self).__init__()
+        self.setFlag(QGraphicsItem.ItemIsSelectable, True)
+        self.rectF = QRectF(x, y, 10, 10)
+        self.x = x
+        self.y = y
+        self._brush = QBrush(Qt.green)
 
-    def __init__(self, x, y, parent=None):
-        super().__init__(parent)
-        self.setFlag(QGraphicsItem.ItemIsMovable)
-        self.xCord = x
-        self.yCord = y
+    def setBrush(self, brush):
+        self._brush = brush
+        self.update()
 
     def boundingRect(self):
-        penWidth = 1.0
-        return QRectF(self.xCord, self.xCord, 20 + penWidth, 20 + penWidth)
+        return self.rectF
 
-    def paint(self, painter, option, widget):
-        painter.drawRect(self.xCord, self.yCord, 20, 20)
+    def paint(self, painter=None, style=None, widget=None):
+        painter.fillRect(self.rectF, self._brush)
 
-    def shape(self):
-        path = QPainterPath()
-        path.addRect(self.boundingRect())
-        return path
+    def getX(self):
+        return self.x
+
+    def getY(self):
+        return self.y
+
+    def setXa(self, x):
+        self.rectF = QRectF(x, self.y, 10, 10)
+        self.x = x
+        self.update()
+
+    def setYa(self, y):
+        self.rectF = QRectF(self.x, y, 10, 10)
+        self.y = y
+        self.update
