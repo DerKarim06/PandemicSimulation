@@ -1,41 +1,25 @@
-from PyQt5 import QtGui
-from PyQt5.QtGui import QPainterPath, QColor, QPen, QBrush
-from PyQt5.QtWidgets import QGraphicsItem
-from PyQt5.QtCore import Qt, QRectF
-from matplotlib.patches import Shadow
+import random
 
-
-class Particle(QGraphicsItem):
-    def __init__(self, x, y):
-        super(Particle, self).__init__()
-        self.setFlag(QGraphicsItem.ItemIsSelectable, True)
-        self.rectF = QRectF(x, y, 10, 10)
+class Particle:
+    def __init__(self, x, y, radius):
+        print("Particle created")
         self.x = x
         self.y = y
-        self._brush = QBrush(Qt.green)
+        self.radius = radius
+        self.state = "healthy"
+        self.infectionCounter = 0
 
-    def setBrush(self, brush):
-        self._brush = brush
-        self.update()
-
-    def boundingRect(self):
-        return self.rectF
-
-    def paint(self, painter=None, style=None, widget=None):
-        painter.fillRect(self.rectF, self._brush)
-
-    def getX(self):
-        return self.x
-
-    def getY(self):
-        return self.y
-
-    def setXa(self, x):
-        self.rectF = QRectF(x, self.y, 10, 10)
-        self.x = x
-        self.update()
-
-    def setYa(self, y):
-        self.rectF = QRectF(self.x, y, 10, 10)
-        self.y = y
-        self.update
+    def move(self):
+        if(self.state != "dead"):
+            axis = random.randint(1, 2) # 1: x-Axis; 2: y-Axis
+            direction = random.randint(1, 2) # 1: down/left 2: up/right
+            if(axis == 1):
+                if(direction == 1 and self.x > 0):
+                    self.x = self.x - 1
+                elif(self.x < 200):
+                    self.x = self.x + 1
+            else:
+                if (direction == 1 and self.y > 0):
+                    self.y = self.y - 1
+                elif(self.y < 200):
+                    self.y = self.y + 1

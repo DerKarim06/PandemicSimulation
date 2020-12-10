@@ -24,7 +24,7 @@ class Presenter(QtCore.QObject):
     def mainLoop(self):
         if self.isSimulationRunning:
             self.simulation.performStep()
-            self.ui.updateScene(self.simulation.getScene())
+            self.ui.updateParticles(self.simulation.getParticles())
             # self.ui.updateData(self.simulation.getData())
 
     def startSimulation(self):
@@ -44,8 +44,15 @@ class Presenter(QtCore.QObject):
         print("Hello World from Presenter")
         self.ui.resetSimulation()
 
-    def _connectUIElements(self) -> None:
+    def speedSimulation(self, value):
+        self.timer.disconnect()
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.mainLoop)
+        self.timer.start(int(1000 / value))
+
+    def _connectUIElements(self, value=60) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
         self.ui.pauseSimulationSignal.connect(self.pauseSimulation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
+        self.ui.speedSimulationSignal.connect(self.speedSimulation, value)

@@ -100,7 +100,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Pandemiesimulator"))
         self.checkBox.setText(_translate("MainWindow", "People staying at home"))
-        self.label_2.setText(_translate("MainWindow", "Parameter 1"))
+        self.label_2.setText(_translate("MainWindow", "Geschwindigkeit"))
         self.label_4.setText(_translate("MainWindow", "Parameter 1"))
         self.label_5.setText(_translate("MainWindow", "Parameter 1"))
         self.startSimButton.setText(_translate("MainWindow", "Start"))
