@@ -8,10 +8,11 @@ from view.mainwindow import Ui_MainWindow
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal()
+    startSimulationSignal = QtCore.pyqtSignal(int)
     pauseSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     speedSimulationSignal = QtCore.pyqtSignal(int)
+    radiusChangedSignal = QtCore.pyqtSignal(int)
 
     def __init__(self):
         super(View, self).__init__()
@@ -22,15 +23,19 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.horizontalSlider.setValue(60)
         self.horizontalSlider.setTickInterval(10)
         self.horizontalSlider.setTickPosition(QSlider.TicksBelow)
+        self.spinBox.setMaximum(1000)
+        self.spinBox.setValue(100)
+        self.spinBox_3.setValue(3)
 
     def connectSignals(self):
         self.startSimButton.pressed.connect(self.startSimulationClicked)
         self.pauseSimButton.pressed.connect(self.pauseSimulationClicked)
         self.resetSimButton.pressed.connect(self.resetSimulationClicked)
         self.horizontalSlider.valueChanged.connect(self.speedSimulationChanged)
+        self.spinBox_3.valueChanged.connect(self.radiusBoxChanged)
 
     def startSimulationClicked(self):
-        self.startSimulationSignal.emit()
+        self.startSimulationSignal.emit(self.spinBox.value())
 
     def pauseSimulationClicked(self):
         self.pauseSimulationSignal.emit()
@@ -40,6 +45,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def speedSimulationChanged(self):
         self.speedSimulationSignal.emit(self.horizontalSlider.value())
+
+    def radiusBoxChanged(self):
+        self.radiusChangedSignal.emit(self.spinBox_3.value())
 
     def startSimulation(self):
         i = 1

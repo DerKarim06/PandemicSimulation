@@ -27,10 +27,10 @@ class Presenter(QtCore.QObject):
             self.ui.updateParticles(self.simulation.getParticles())
             # self.ui.updateData(self.simulation.getData())
 
-    def startSimulation(self):
+    def startSimulation(self, countParticles):
         self.isSimulationRunning = True
         print("Hello World from Presenter")
-        self.simulation = Simulation()
+        self.simulation = Simulation(countParticles)
         self.ui.startSimulation()
 
     def pauseSimulation(self):
@@ -50,9 +50,14 @@ class Presenter(QtCore.QObject):
         self.timer.timeout.connect(self.mainLoop)
         self.timer.start(int(1000 / value))
 
-    def _connectUIElements(self, value=60) -> None:
+    def changeRadius(self, radius):
+        if(self.simulation != None):
+            self.simulation.setRadius(radius)
+
+    def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
         self.ui.pauseSimulationSignal.connect(self.pauseSimulation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
-        self.ui.speedSimulationSignal.connect(self.speedSimulation, value)
+        self.ui.speedSimulationSignal.connect(self.speedSimulation)
+        self.ui.radiusChangedSignal.connect(self.changeRadius)

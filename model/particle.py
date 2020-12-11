@@ -1,11 +1,10 @@
 import random
 
 class Particle:
-    def __init__(self, x, y, radius):
+    def __init__(self, x, y):
         print("Particle created")
         self.x = x
         self.y = y
-        self.radius = radius
         self.state = "healthy"
         self.infectionCounter = 0
 
@@ -16,10 +15,10 @@ class Particle:
             if(axis == 1):
                 if(direction == 1 and self.x > 0):
                     self.x = self.x - 1
-                elif(self.x < 200):
+                elif(self.x < 195):
                     self.x = self.x + 1
             else:
                 if (direction == 1 and self.y > 0):
                     self.y = self.y - 1
-                elif(self.y < 200):
+                elif(self.y < 195):
                     self.y = self.y + 1
