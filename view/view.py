@@ -8,7 +8,7 @@ from view.mainwindow import Ui_MainWindow
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal(int)
+    startSimulationSignal = QtCore.pyqtSignal(int, int)
     pauseSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     speedSimulationSignal = QtCore.pyqtSignal(int)
@@ -18,13 +18,16 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         super(View, self).__init__()
         self.setupUi(self)
         self.connectSignals()
+        # FPS slider
         self.horizontalSlider.setMinimum(1)
         self.horizontalSlider.setMaximum(99)
         self.horizontalSlider.setValue(60)
         self.horizontalSlider.setTickInterval(10)
         self.horizontalSlider.setTickPosition(QSlider.TicksBelow)
+        # particle count spinbox
         self.spinBox.setMaximum(1000)
         self.spinBox.setValue(100)
+        # radius spinbox
         self.spinBox_3.setValue(3)
 
     def connectSignals(self):
@@ -35,7 +38,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_3.valueChanged.connect(self.radiusBoxChanged)
 
     def startSimulationClicked(self):
-        self.startSimulationSignal.emit(self.spinBox.value())
+        self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_3.value())
 
     def pauseSimulationClicked(self):
         self.pauseSimulationSignal.emit()
@@ -49,19 +52,17 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def radiusBoxChanged(self):
         self.radiusChangedSignal.emit(self.spinBox_3.value())
 
-    def startSimulation(self):
-        i = 1
-        # self.stackedWidget.setCurrentWidget(self.simulatorWidget)
-
+    #TODO: implement starting from paused state
     def pauseSimulation(self):
         i = 1
 
+    # resets by clearing the scene
     def resetSimulation(self):
         self.graphicsView_2.scene().clear()
 
+    # function visualizes the data from the simulation model in a graphicsview. It uses a new scene for every step.
     def updateParticles(self, particleList):
-        print("updateP")
-        scene = QtWidgets.QGraphicsScene(0, 0, 200, 200)
+        scene = QtWidgets.QGraphicsScene(0, 0, 200, 200)    # scene with 200 x 200 size
         for i in range(0, len(particleList)):
             if(particleList[i].state == "healthy"):
                 pen = QPen(Qt.darkGreen)
@@ -69,7 +70,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             elif(particleList[i].state == "infected"):
                 pen = QPen(Qt.darkRed)
                 brush = QBrush(Qt.red)
-            else:
+            else:   # only for later use (dead particles)
                 pen = QPen(Qt.black)
                 brush = QBrush(Qt.darkGray)
             scene.addRect(QRectF(particleList[i].x, particleList[i].y, 5, 5), pen, brush)
