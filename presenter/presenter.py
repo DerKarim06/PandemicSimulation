@@ -31,7 +31,6 @@ class Presenter(QtCore.QObject):
     def startSimulation(self, countParticles, radius):
         self.isSimulationRunning = True
         self.simulation = Simulation(countParticles, radius)
-        self.ui.startSimulation()
 
     # pauses the simulation
     def pauseSimulation(self):
