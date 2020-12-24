@@ -12,8 +12,8 @@ class Simulation:
         self.particleList = {}
         # iterate through particleList and create as many particles as countParticles is. the positions are random
         for i in range(0, countParticles):
-            rndmX = random.randint(0, 200)
-            rndmY = random.randint(0, 200)
+            rndmX = random.randint(0, 195)
+            rndmY = random.randint(0, 195)
             self.particleList[i] = Particle(rndmX, rndmY)
         self.particleList[random.randint(0, len(self.particleList) - 1)].state = "infected" # set one particles state as "infected"
 

@@ -6,11 +6,57 @@ class Particle:
         #print("Particle created")
         self.x = x
         self.y = y
+        self.currentDeltaX = random.randint(-5, 5)
+        self.currentDeltaY = random.randint(-5, 5)
+        while(self.currentDeltaX == 0 and self.currentDeltaY == 0):
+            self.currentDeltaY = random.randint(-5, 5)
+        self.stepX = self.currentDeltaX
+        self.stepY = self.currentDeltaY
         self.state = "healthy"
         self.infectionCounter = 0   # this is for checking how many days a particle was sick later
 
     # function moves a particle in a random direction. Stepsize: 1
+
     def move(self):
+        if (self.x == 195 or self.x == 0 or self.y == 195 or self.y == 0):
+                self.currentDeltaX = random.randint(-5, 5)
+                self.stepX = self.currentDeltaX
+                test = random.randint(-5, 5)
+                while(test == self.currentDeltaX):
+                    test = random.randint(-5, 5)
+                self.currentDeltaY = test
+                self.stepY = self.currentDeltaY
+                if self.x == 0:
+                    self.x += 1
+                if self.x == 195:
+                    self.x -= 1
+                if self.y == 0:
+                    self.y += 1
+                if self.y == 195:
+                    self.y -= 1
+        if(self.stepX == 0 and self.stepY == 0):
+            self.stepX = self.currentDeltaX
+            self.stepY = self.currentDeltaY
+        if(self.stepX != 0):
+            if(self.stepX > 0):
+                if(self.x < 195):
+                    self.x += 1
+                self.stepX -= 1
+            else:
+                if(self.x > 0):
+                    self.x -= 1
+                self.stepX += 1
+        else:
+            if(self.stepY > 0):
+                if(self.y < 195):
+                    self.y += 1
+                self.stepY -= 1
+            else:
+                if(self.y > 0):
+                    self.y -= 1
+                self.stepY += 1
+
+    def move2(self):
         # only move when it is not dead
         if(self.state != "dead"):
             axis = random.randint(1, 2) # 1: x-Axis; 2: y-Axis
