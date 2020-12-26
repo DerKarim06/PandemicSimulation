@@ -35,13 +35,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_2.setValue(5)
         # radius spinbox
         self.spinBox_3.setValue(3)
-        self.graphicsWidget = pg.PlotWidget(self.centralwidget)
-
-        hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
-
-        # plot data: x, y values
-        self.graphicsWidget.plot(hour, temperature)
 
     def connectSignals(self):
         self.startSimButton.pressed.connect(self.startSimulationClicked)
