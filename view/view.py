@@ -3,6 +3,9 @@ from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QPen, QBrush
 from PyQt5.QtWidgets import QSlider
 
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
+
 from view.mainwindow import Ui_MainWindow
 
 
@@ -12,6 +15,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     pauseSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     speedSimulationSignal = QtCore.pyqtSignal(int)
+    infectionRateSignal = QtCore.pyqtSignal(int)
     radiusChangedSignal = QtCore.pyqtSignal(int)
 
     def __init__(self):
@@ -27,14 +31,24 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # particle count spinbox
         self.spinBox.setMaximum(1000)
         self.spinBox.setValue(100)
+        #infection rate spinbox
+        self.spinBox_2.setValue(5)
         # radius spinbox
         self.spinBox_3.setValue(3)
+        self.graphicsWidget = pg.PlotWidget(self.centralwidget)
+
+        hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
+
+        # plot data: x, y values
+        self.graphicsWidget.plot(hour, temperature)
 
     def connectSignals(self):
         self.startSimButton.pressed.connect(self.startSimulationClicked)
         self.pauseSimButton.pressed.connect(self.pauseSimulationClicked)
         self.resetSimButton.pressed.connect(self.resetSimulationClicked)
         self.horizontalSlider.valueChanged.connect(self.speedSimulationChanged)
+        self.spinBox_2.valueChanged.connect(self.infectionRateBoxChanged)
         self.spinBox_3.valueChanged.connect(self.radiusBoxChanged)
 
     def startSimulationClicked(self):
@@ -48,6 +62,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def speedSimulationChanged(self):
         self.speedSimulationSignal.emit(self.horizontalSlider.value())
+
+    def infectionRateBoxChanged(self):
+        self.infectionRateSignal.emit(self.spinBox_2.value())
 
     def radiusBoxChanged(self):
         self.radiusChangedSignal.emit(self.spinBox_3.value())

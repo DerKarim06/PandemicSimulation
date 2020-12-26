@@ -50,6 +50,10 @@ class Presenter(QtCore.QObject):
         self.timer.timeout.connect(self.mainLoop)
         self.timer.start(int(1000 / value))
 
+    # changes the infection rate
+    def changeInfectionRate(self, infectionRate):
+        self.simulation.setInfectionRate(infectionRate)
+
     # changes the particles radius
     def changeRadius(self, radius):
         if(self.simulation != None):
@@ -61,4 +65,5 @@ class Presenter(QtCore.QObject):
         self.ui.pauseSimulationSignal.connect(self.pauseSimulation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
         self.ui.speedSimulationSignal.connect(self.speedSimulation)
+        self.ui.infectionRateSignal.connect(self.changeInfectionRate)
         self.ui.radiusChangedSignal.connect(self.changeRadius)

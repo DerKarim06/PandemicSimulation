@@ -5,9 +5,10 @@ import random
 
 
 class Simulation:
-    def __init__(self, countParticles=100, radius=3):
+    def __init__(self, countParticles=100, infectionRate=12, radius=3):
         #print("Simulation Created")
         self.radius = radius
+        self.infectionRate = infectionRate
         self.stepCounter = 0
         self.particleList = {}
         # iterate through particleList and create as many particles as countParticles is. the positions are random
@@ -25,16 +26,22 @@ class Simulation:
             self.particleList[i].move()
         self.detectCollisions()
 
+
     # function searches for collisions with infected particles and overwrites particles state with a given possibility to "infected"
     def detectCollisions(self):
         for i in range(0, len(self.particleList)):
             for j in range(0, len(self.particleList)):
                 if(abs(self.particleList[i].x -self.particleList[j].x) <= self.radius and abs(self.particleList[i].y - self.particleList[j].y) <= self.radius and self.particleList[i].state == "healthy" and self.particleList[j].state == "infected"): #and self.particleList[j].state == "infected"
-                    infectionRate = 12 #Percent
+                    infectionRate = self.infectionRate #Percent
                     rndm = random.randint(1, 100)
                     #print(rndm)
                     if(rndm <= infectionRate):
                         self.particleList[i].state = "infected"
+
+    # sets the infection rate
+    def setInfectionRate(self, infectionRate):
+        self.infectionRate = infectionRate
+
     # sets the simulations radius
     def setRadius(self, radius):
         self.radius = radius
