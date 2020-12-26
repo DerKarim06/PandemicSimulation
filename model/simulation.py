@@ -23,7 +23,10 @@ class Simulation:
         #print("Simulation step {} processed.".format(self.stepCounter))
         # move every particle in particleList
         for i in range(0, len(self.particleList)):
-            self.particleList[i].move()
+            if(self.particleList[i].state != 'dead'):
+                self.particleList[i].move()
+            if self.particleList[i].state == 'infected':
+                self.particleList[i].incrementInfectionCounter()
         self.detectCollisions()
 
 

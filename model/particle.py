@@ -56,6 +56,17 @@ class Particle:
                     self.y -= 1
                 self.stepY += 1
 
+    def incrementInfectionCounter(self):
+        if self.state == 'infected':
+            if self.infectionCounter < random.randint(600, 1200):
+                self.infectionCounter += 1
+            else:
+                if random.randint(0, 100) < 4:
+                    self.state = 'dead'
+                else:
+                    self.infectionCounter = 0
+                    self.state = 'healthy'
+
     def move2(self):
         # only move when it is not dead
         if(self.state != "dead"):

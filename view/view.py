@@ -35,6 +35,20 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_2.setValue(5)
         # radius spinbox
         self.spinBox_3.setValue(3)
+        self.i = 0
+        self.j = 0
+
+        self.dataX = []
+        self.dataInfected = []
+        self.dataHealthy = []
+        self.dataDead = []
+
+        self.graphWidget.setBackground('w')
+        self.graphWidget.setLabel('left', 'Anzahl der Partikel')
+        self.graphWidget.setLabel('bottom', 'Zeit in Sekunden')
+        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=6))
+        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=6))
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=6))
 
     def connectSignals(self):
         self.startSimButton.pressed.connect(self.startSimulationClicked)
@@ -69,6 +83,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     # resets by clearing the scene
     def resetSimulation(self):
         self.graphicsView_2.scene().clear()
+        self.graphWidget.clear()
+        self.dataDead.clear()
+        self.dataHealthy.clear()
+        self.dataInfected.clear()
+        self.dataX.clear()
+        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=6))
+        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=6))
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=6))
 
     # function visualizes the data from the simulation model in a graphicsview. It uses a new scene for every step.
     def updateParticles(self, particleList):
@@ -88,3 +110,22 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.graphicsView_2.ensureVisible(scene.sceneRect())
         self.graphicsView_2.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)
         # self.graphicsView_2.scale(self.graphicsView_2.frameSize() / scene.width(), self.graphicsView_2.frameSize() / scene.height())
+        self.i += 1
+        if(self.i % 60 == 0):
+            j = 0
+            k = 0
+            l = 0
+            for i in range(0, len(particleList)):
+                if(particleList[i].state == 'dead'):
+                    l += 1
+                if (particleList[i].state == "infected"):
+                    j += 1
+                if(particleList[i].state == "healthy"):
+                    k += 1
+            self.dataX.append(int(self.i/60))
+            self.dataInfected.append(j)
+            self.dataHealthy.append(k)
+            self.dataDead.append(l)
+            self.plotInfected.setData(self.dataX, self.dataInfected)
+            self.plotHealthy.setData(self.dataX, self.dataHealthy)
+            self.plotDead.setData(self.dataX, self.dataDead)
