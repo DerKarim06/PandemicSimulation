@@ -160,10 +160,17 @@ class Ui_MainWindow(object):
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 758, 21))
         self.menubar.setObjectName("menubar")
+        self.menuDatei = QtWidgets.QMenu(self.menubar)
+        self.menuDatei.setObjectName("menuDatei")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.actionExport_CSV = QtWidgets.QAction(MainWindow)
+        self.actionExport_CSV.setCheckable(False)
+        self.actionExport_CSV.setObjectName("actionExport_CSV")
+        self.menuDatei.addAction(self.actionExport_CSV)
+        self.menubar.addAction(self.menuDatei.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -187,5 +194,7 @@ class Ui_MainWindow(object):
         self.startSimButton.setText(_translate("MainWindow", "Start"))
         self.pauseSimButton.setText(_translate("MainWindow", "Pause"))
         self.resetSimButton.setText(_translate("MainWindow", "Reset"))
+        self.menuDatei.setTitle(_translate("MainWindow", "Datei"))
+        self.actionExport_CSV.setText(_translate("MainWindow", "Export CSV"))
 
 from pyqtgraph import PlotWidget

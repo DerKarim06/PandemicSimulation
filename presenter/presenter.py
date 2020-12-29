@@ -59,6 +59,10 @@ class Presenter(QtCore.QObject):
         if(self.simulation != None):
             self.simulation.setRadius(radius)
 
+    def export_csv(self):
+        if(self.isSimulationRunning == False):
+            self.ui.export_csv()
+
     def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
@@ -67,3 +71,4 @@ class Presenter(QtCore.QObject):
         self.ui.speedSimulationSignal.connect(self.speedSimulation)
         self.ui.infectionRateSignal.connect(self.changeInfectionRate)
         self.ui.radiusChangedSignal.connect(self.changeRadius)
+        self.ui.export_csvSignal.connect(self.export_csv)

@@ -61,7 +61,7 @@ class Particle:
             if self.infectionCounter < random.randint(600, 1200):
                 self.infectionCounter += 1
             else:
-                if random.randint(0, 100) < 4:
+                if random.randint(0, 100) < 8:
                     self.state = 'dead'
                 else:
                     self.infectionCounter = 0

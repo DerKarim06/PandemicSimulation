@@ -1,7 +1,8 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QPen, QBrush
 from PyQt5.QtWidgets import QSlider
+import numpy as np
 
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
@@ -17,6 +18,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     speedSimulationSignal = QtCore.pyqtSignal(int)
     infectionRateSignal = QtCore.pyqtSignal(int)
     radiusChangedSignal = QtCore.pyqtSignal(int)
+    export_csvSignal = QtCore.pyqtSignal()
 
     def __init__(self):
         super(View, self).__init__()
@@ -57,6 +59,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.horizontalSlider.valueChanged.connect(self.speedSimulationChanged)
         self.spinBox_2.valueChanged.connect(self.infectionRateBoxChanged)
         self.spinBox_3.valueChanged.connect(self.radiusBoxChanged)
+        self.actionExport_CSV.triggered.connect(self.export_csvClicked)
 
     def startSimulationClicked(self):
         self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_3.value())
@@ -75,6 +78,15 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def radiusBoxChanged(self):
         self.radiusChangedSignal.emit(self.spinBox_3.value())
+
+    def export_csvClicked(self):
+        self.export_csvSignal.emit()
+    
+    def export_csv(self):
+        name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
+        print(name[0])
+        csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataInfected, self.dataDead]).T
+        np.savetxt(name[0] + ".csv", csvMatrix, delimiter=",", fmt='%i', header="Seconds, Healthy, Infected, Dead")
 
     #TODO: implement starting from paused state
     def pauseSimulation(self):
