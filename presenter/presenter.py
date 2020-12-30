@@ -12,6 +12,7 @@ class Presenter(QtCore.QObject):
         self.ui = View()
         self.simulation = None
         self.isSimulationRunning = False
+        self.isSimulationPaused = False
 
         # create timer that will call the mainLoop every 1000/FPS milliseconds
         self.timer = QtCore.QTimer(self)
@@ -32,10 +33,16 @@ class Presenter(QtCore.QObject):
         self.isSimulationRunning = True
         self.simulation = Simulation(countParticles, radius)
 
-    # pauses the simulation
-    def pauseSimulation(self):
-        self.isSimulationRunning = False
-        self.ui.pauseSimulation()
+    # pauses or resumes the simulation
+    def pauseResumeSimulation(self):
+        if(self.isSimulationPaused == False):
+            self.isSimulationRunning = False
+            self.isSimulationPaused = True
+            self.ui.pauseSimulation()
+        else:
+            self.isSimulationRunning = True
+            self.isSimulationPaused = False
+            self.ui.resumeSimulation()
 
     # resets the simulation
     def resetSimulation(self):
@@ -66,7 +73,7 @@ class Presenter(QtCore.QObject):
     def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
-        self.ui.pauseSimulationSignal.connect(self.pauseSimulation)
+        self.ui.pauseResumeSimulationSignal.connect(self.pauseResumeSimulation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
         self.ui.speedSimulationSignal.connect(self.speedSimulation)
         self.ui.infectionRateSignal.connect(self.changeInfectionRate)

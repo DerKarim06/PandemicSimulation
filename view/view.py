@@ -13,7 +13,7 @@ from view.mainwindow import Ui_MainWindow
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     startSimulationSignal = QtCore.pyqtSignal(int, int)
-    pauseSimulationSignal = QtCore.pyqtSignal()
+    pauseResumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     speedSimulationSignal = QtCore.pyqtSignal(int)
     infectionRateSignal = QtCore.pyqtSignal(int)
@@ -65,7 +65,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_3.value())
 
     def pauseSimulationClicked(self):
-        self.pauseSimulationSignal.emit()
+        self.pauseResumeSimulationSignal.emit()
 
     def resetSimulationClicked(self):
         self.resetSimulationSignal.emit()
@@ -88,9 +88,11 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataInfected, self.dataDead]).T
         np.savetxt(name[0] + ".csv", csvMatrix, delimiter=",", fmt='%i', header="Seconds, Healthy, Infected, Dead")
 
-    #TODO: implement starting from paused state
     def pauseSimulation(self):
-        i = 1
+        self.pauseSimButton.setText("Weiter")
+
+    def resumeSimulation(self):
+        self.pauseSimButton.setText("Pause")
 
     # resets by clearing the scene
     def resetSimulation(self):
