@@ -8,6 +8,7 @@ from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 
 from view.mainwindow import Ui_MainWindow
+from view.dialog import Dialog
 
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -48,9 +49,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.graphWidget.setBackground('w')
         self.graphWidget.setLabel('left', 'Anzahl der Partikel')
         self.graphWidget.setLabel('bottom', 'Zeit in Sekunden')
-        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=6))
-        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=6))
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=6))
+        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=3))
+        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=3))
 
     def connectSignals(self):
         self.startSimButton.pressed.connect(self.startSimulationClicked)
@@ -82,11 +83,17 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def export_csvClicked(self):
         self.export_csvSignal.emit()
     
-    def export_csv(self):
+    def export_csv1(self):
+        self.d = Dialog()
+        self.d.finishedSignal.connect(self.export_csv2)
+        self.d.exec_()
+        print("Test")
+
+    def export_csv2(self, granularity):
         name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
         print(name[0])
         csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataInfected, self.dataDead]).T
-        np.savetxt(name[0] + ".csv", csvMatrix, delimiter=",", fmt='%i', header="Seconds, Healthy, Infected, Dead")
+        np.savetxt(name[0] + ".csv", csvMatrix[0::granularity], delimiter=",", fmt='%i', header="Seconds, Healthy, Infected, Dead")
 
     def pauseSimulation(self):
         self.pauseSimButton.setText("Weiter")
@@ -102,9 +109,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dataHealthy.clear()
         self.dataInfected.clear()
         self.dataX.clear()
-        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=6))
-        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=6))
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=6))
+        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=3))
+        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=3))
 
     # function visualizes the data from the simulation model in a graphicsview. It uses a new scene for every step.
     def updateParticles(self, particleList):

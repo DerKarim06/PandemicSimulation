@@ -1,6 +1,7 @@
 from PyQt5 import QtCore
 
 from view.view import View
+from view.dialog import Dialog
 from model.simulation import Simulation
 
 FPS = 60
@@ -10,6 +11,7 @@ class Presenter(QtCore.QObject):
         super(Presenter, self).__init__()
         # create main window
         self.ui = View()
+        self.ui2 = Dialog()
         self.simulation = None
         self.isSimulationRunning = False
         self.isSimulationPaused = False
@@ -68,7 +70,7 @@ class Presenter(QtCore.QObject):
 
     def export_csv(self):
         if(self.isSimulationRunning == False):
-            self.ui.export_csv()
+            self.ui.export_csv1()
 
     def _connectUIElements(self) -> None:
         # elements of the main window
