@@ -27,13 +27,14 @@ class Presenter(QtCore.QObject):
     def mainLoop(self):
         if self.isSimulationRunning:
             self.simulation.performStep()
-            self.ui.updateParticles(self.simulation.getParticles())
+            self.ui.updateParticles(self.simulation.getParticles(), self.simulation.getData())
             # self.ui.updateData(self.simulation.getData())
 
     # starts the simulation with the given arguments
     def startSimulation(self, countParticles, radius):
         self.isSimulationRunning = True
         self.simulation = Simulation(countParticles, radius)
+        self.ui.startSimulation()
 
     # pauses or resumes the simulation
     def pauseResumeSimulation(self):

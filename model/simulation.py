@@ -1,3 +1,5 @@
+import numpy as np
+
 from model.particle import Particle
 # from model.particleState import ParticleState
 # from model.statistics import Statistics
@@ -18,15 +20,35 @@ class Simulation:
             self.particleList[i] = Particle(rndmX, rndmY)
         self.particleList[random.randint(0, len(self.particleList) - 1)].state = "infected" # set one particles state as "infected"
 
+        self.dataX = []
+        self.dataInfected = []
+        self.dataHealthy = []
+        self.dataDead = []
+
     def performStep(self):
         self.stepCounter += 1 # variable to know how many frames were already created
         #print("Simulation step {} processed.".format(self.stepCounter))
         # move every particle in particleList
+        j = 0
+        k = 0
+        l = 0
         for i in range(0, len(self.particleList)):
             if(self.particleList[i].state != 'dead'):
                 self.particleList[i].move()
             if self.particleList[i].state == 'infected':
                 self.particleList[i].incrementInfectionCounter()
+            if (self.stepCounter % 60 == 0): #Find variables for the statistic/csv
+                if (self.particleList[i].state == 'dead'):
+                    l += 1
+                if (self.particleList[i].state == "infected"):
+                    j += 1
+                if (self.particleList[i].state == "healthy"):
+                    k += 1
+        if (self.stepCounter % 60 == 0): #add the variables to the lists
+            self.dataX.append(int(self.stepCounter / 60))
+            self.dataInfected.append(j)
+            self.dataHealthy.append(k)
+            self.dataDead.append(l)
         self.detectCollisions()
 
 
@@ -50,7 +72,8 @@ class Simulation:
         self.radius = radius
     # returns the current frame count
     def getData(self):
-        return self.stepCounter
+        return np.array([self.dataX, self.dataHealthy, self.dataInfected, self.dataDead]).T
+
     # returns the particleList
     def getParticles(self):
         return self.particleList

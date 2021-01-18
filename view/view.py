@@ -93,10 +93,21 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
         print(name[0])
         csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataInfected, self.dataDead]).T
-        np.savetxt(name[0] + ".csv", csvMatrix[0::granularity], delimiter=",", fmt='%i', header="Seconds, Healthy, Infected, Dead")
+        np.savetxt(name[0], csvMatrix[0::granularity], delimiter=",", fmt='%i', header="Seconds, Healthy, Infected, Dead")
 
     def pauseSimulation(self):
         self.pauseSimButton.setText("Weiter")
+
+    def startSimulation(self):
+        self.graphWidget.clear()
+        self.dataDead.clear()
+        self.dataHealthy.clear()
+        self.dataInfected.clear()
+        self.dataX.clear()
+        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected,
+                                                  pen=pg.mkPen(color=(255, 0, 0), width=3))
+        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=3))
 
     def resumeSimulation(self):
         self.pauseSimButton.setText("Pause")
@@ -114,7 +125,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=3))
 
     # function visualizes the data from the simulation model in a graphicsview. It uses a new scene for every step.
-    def updateParticles(self, particleList):
+    def updateParticles(self, particleList, data):
         scene = QtWidgets.QGraphicsScene(0, 0, 200, 200)    # scene with 200 x 200 size
         for i in range(0, len(particleList)):
             if(particleList[i].state == "healthy"):
@@ -133,20 +144,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.graphicsView_2.scale(self.graphicsView_2.frameSize() / scene.width(), self.graphicsView_2.frameSize() / scene.height())
         self.i += 1
         if(self.i % 60 == 0):
-            j = 0
-            k = 0
-            l = 0
-            for i in range(0, len(particleList)):
-                if(particleList[i].state == 'dead'):
-                    l += 1
-                if (particleList[i].state == "infected"):
-                    j += 1
-                if(particleList[i].state == "healthy"):
-                    k += 1
-            self.dataX.append(int(self.i/60))
-            self.dataInfected.append(j)
-            self.dataHealthy.append(k)
-            self.dataDead.append(l)
+            self.dataX = data[:,0]
+            self.dataHealthy = data[:, 1]
+            self.dataInfected = data[:, 2]
+            self.dataDead = data[:, 3]
             self.plotInfected.setData(self.dataX, self.dataInfected)
             self.plotHealthy.setData(self.dataX, self.dataHealthy)
             self.plotDead.setData(self.dataX, self.dataDead)
