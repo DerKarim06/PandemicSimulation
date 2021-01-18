@@ -100,10 +100,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def startSimulation(self):
         self.graphWidget.clear()
-        self.dataDead.clear()
-        self.dataHealthy.clear()
-        self.dataInfected.clear()
-        self.dataX.clear()
+        self.dataDead = []
+        self.dataHealthy = []
+        self.dataInfected = []
+        self.dataX = []
         self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected,
                                                   pen=pg.mkPen(color=(255, 0, 0), width=3))
         self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
@@ -116,10 +116,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def resetSimulation(self):
         self.graphicsView_2.scene().clear()
         self.graphWidget.clear()
-        self.dataDead.clear()
-        self.dataHealthy.clear()
-        self.dataInfected.clear()
-        self.dataX.clear()
+        self.dataDead = []
+        self.dataHealthy = []
+        self.dataInfected = []
+        self.dataX = []
         self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=3))
         self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
         self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=3))
