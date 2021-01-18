@@ -188,7 +188,7 @@ class Ui_MainWindow(object):
         self.label_11.setText(_translate("MainWindow", "Platzhalter"))
         self.label_10.setText(_translate("MainWindow", "Platzhalter"))
         self.label_9.setText(_translate("MainWindow", "Platzhalter"))
-        self.label_2.setText(_translate("MainWindow", "Geschwindigkeit"))
+        self.label_2.setText(_translate("MainWindow", "FPS"))
         self.label_4.setText(_translate("MainWindow", "Parameter 1"))
         self.label_5.setText(_translate("MainWindow", "Parameter 1"))
         self.startSimButton.setText(_translate("MainWindow", "Start"))
