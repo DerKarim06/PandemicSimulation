@@ -1,0 +1,14 @@
+
+presenter
+	-fehlermeldungen triggern wenn etwas nicht ausführbar ist (zb export weil simulation noch läuft)
+
+view:	
+	 nur eine der export-methoden drinnen lassen (andere minimum auskommentieren)
+particle:
+	move() kann man definitiv aufteilen in verschiedene methoden
+		den ersten fall kann man vermutlich auch vereinfachen
+	wenn move2 nur den fall ob man tot ist prüft, kann man das auch in move mit reinziehen
+
+simulation
+	detect collisions auch in particle implementieren aber ohne for schleife
+	die for-schleifen separat und effizienter wenn die zweite erst bei i zum iterien beginnt ( das davor wurde schon überprüft)
