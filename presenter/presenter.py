@@ -35,23 +35,29 @@ class Presenter(QtCore.QObject):
         self.isSimulationRunning = True
         self.simulation = Simulation(countParticles, radius)
         self.ui.startSimulation()
+        self.ui.resumeSimulation()
 
     # pauses or resumes the simulation
     def pauseResumeSimulation(self):
-        if(self.isSimulationPaused == False):
-            self.isSimulationRunning = False
-            self.isSimulationPaused = True
-            self.ui.pauseSimulation()
+        if self.simulation != None:
+            if(self.isSimulationPaused == False):
+                self.isSimulationRunning = False
+                self.isSimulationPaused = True
+                self.ui.pauseSimulation()
+            else:
+                self.isSimulationRunning = True
+                self.isSimulationPaused = False
+                self.ui.resumeSimulation()
         else:
-            self.isSimulationRunning = True
-            self.isSimulationPaused = False
             self.ui.resumeSimulation()
 
     # resets the simulation
     def resetSimulation(self):
         self.isSimulationRunning = False
+        self.isSimulationPaused = False
         self.simulation = None
         self.ui.resetSimulation()
+        self.ui.resumeSimulation()
 
     # changes the FPS of the simulation
     def speedSimulation(self, value):
@@ -70,8 +76,10 @@ class Presenter(QtCore.QObject):
             self.simulation.setRadius(radius)
 
     def export_csv(self):
-        if(self.isSimulationRunning == False):
-            self.ui.export_csv1()
+        if(self.isSimulationPaused == True):
+            self.ui.ask_granularity()
+        else:
+            self.ui.showExportAlert(self.simulation)
 
     def _connectUIElements(self) -> None:
         # elements of the main window

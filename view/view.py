@@ -35,9 +35,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox.setMaximum(1000)
         self.spinBox.setValue(100)
         #infection rate spinbox
-        self.spinBox_2.setValue(5)
+        self.spinBox_2.setValue(12)
         # radius spinbox
-        self.spinBox_3.setValue(3)
+        self.spinBox_3.setValue(5)
         self.i = 0
         self.j = 0
 
@@ -83,17 +83,28 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def export_csvClicked(self):
         self.export_csvSignal.emit()
     
-    def export_csv1(self):
+    def ask_granularity(self):
         self.d = Dialog()
-        self.d.finishedSignal.connect(self.export_csv2)
+        self.d.finishedSignal.connect(self.export_csv)
         self.d.exec_()
-        print("Test")
 
-    def export_csv2(self, granularity):
+    def export_csv(self, granularity):
         name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
         print(name[0])
         csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataInfected, self.dataDead]).T
         np.savetxt(name[0], csvMatrix[0::granularity], delimiter=",", fmt='%i', header="Seconds, Healthy, Infected, Dead")
+
+    def showExportAlert(self, simulation):
+        dlg = QtWidgets.QDialog(self)
+        dlg.setWindowTitle("Fehler beim Export!")
+        label = QtWidgets.QLabel(dlg)
+        if simulation != None:
+            label.setText("Export bei laufender Simulation nicht möglich!")
+        else:
+            label.setText("Export bei noch nicht gestarteter Simulation nicht möglich!")
+        label.adjustSize()
+        label.move(100, 60)
+        dlg.exec_()
 
     def pauseSimulation(self):
         self.pauseSimButton.setText("Weiter")
