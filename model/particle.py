@@ -14,6 +14,7 @@ class Particle:
         self.stepY = self.currentDeltaY
         self.state = "healthy"
         self.infectionCounter = 0   # this is for checking how many days a particle was sick later
+        self.is_colliding = False
 
     # function moves a particle in a random direction. Stepsize: 1
 
@@ -35,8 +36,9 @@ class Particle:
             self.y -= 1
 
     def move(self):
-        if (self.x == 195 or self.x == 0 or self.y == 195 or self.y == 0):
-                self.calculate_delta_xy()
+        if (self.x == 195 or self.x == 0 or self.y == 195 or self.y == 0 or self.is_colliding):
+            self.calculate_delta_xy()
+            self.is_colliding = False
         if(self.stepX == 0 and self.stepY == 0):
             self.stepX = self.currentDeltaX
             self.stepY = self.currentDeltaY
@@ -85,6 +87,8 @@ class Particle:
     def detect_collisions(self, particle_list, infection_rate, radius):
         for j in range(0, len(particle_list)):
             if abs(self.x - particle_list[j].x) <= radius and abs(self.y - particle_list[j].y) <= radius and ((self.state == "healthy" and particle_list[j].state == "infected") or (self.state == "infected" and particle_list[j].state == "healthy")):  # and particleList[j].state == "infected"
+                self.is_colliding = True
+                particle_list[j].is_colliding = True
                 rndm = random.randint(1, 100)
                 if (rndm <= infection_rate):
                     if self.state == "healthy":

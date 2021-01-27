@@ -148,7 +148,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             else:   # only for later use (dead particles)
                 pen = QPen(Qt.black)
                 brush = QBrush(Qt.darkGray)
-            scene.addRect(QRectF(particleList[i].x, particleList[i].y, 5, 5), pen, brush)
+            scene.addEllipse(QRectF(particleList[i].x, particleList[i].y, 5, 5), pen, brush)
         self.graphicsView_2.setScene(scene)
         self.graphicsView_2.ensureVisible(scene.sceneRect())
         self.graphicsView_2.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)
