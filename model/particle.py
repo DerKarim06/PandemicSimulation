@@ -2,7 +2,7 @@ import random
 
 # represents one particle in the simulation. Every particle is initialised with the state "healthy"
 class Particle:
-    def __init__(self, x, y):
+    def __init__(self, x, y, radius=3):
         #print("Particle created")
         self.x = x
         self.y = y
@@ -13,6 +13,7 @@ class Particle:
         self.stepX = self.currentDeltaX
         self.stepY = self.currentDeltaY
         self.state = "healthy"
+        self.radius = radius
         self.infectionCounter = 0   # this is for checking how many days a particle was sick later
         self.is_colliding = False
 
@@ -84,11 +85,12 @@ class Particle:
                     self.infectionCounter = 0
                     self.state = 'healthy'
 
-    def detect_collisions(self, particle_list, infection_rate, radius):
+    def detect_collisions(self, particle_list, infection_rate, infectionRadius):
         for j in range(0, len(particle_list)):
-            if abs(self.x - particle_list[j].x) <= radius and abs(self.y - particle_list[j].y) <= radius and ((self.state == "healthy" and particle_list[j].state == "infected") or (self.state == "infected" and particle_list[j].state == "healthy")):  # and particleList[j].state == "infected"
+            if abs(self.x - particle_list[j].x) <= self.radius and abs(self.y - particle_list[j].y) <= self.radius and self != particle_list[j] and self.state != "dead" and particle_list[j].state != "dead":
                 self.is_colliding = True
                 particle_list[j].is_colliding = True
+            if abs(self.x - particle_list[j].x) <= infectionRadius and abs(self.y - particle_list[j].y) <= infectionRadius and self != particle_list[j] and ((self.state == "healthy" and particle_list[j].state == "infected") or (self.state == "infected" and particle_list[j].state == "healthy")):  # and particleList[j].state == "infected"
                 rndm = random.randint(1, 100)
                 if (rndm <= infection_rate):
                     if self.state == "healthy":
