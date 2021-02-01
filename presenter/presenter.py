@@ -31,9 +31,9 @@ class Presenter(QtCore.QObject):
             # self.ui.updateData(self.simulation.getData())
 
     # starts the simulation with the given arguments
-    def startSimulation(self, countParticles, radius):
+    def startSimulation(self, countParticles, infectionRate, radius, initiallyInfected, deathRate):
         self.isSimulationRunning = True
-        self.simulation = Simulation(countParticles, radius)
+        self.simulation = Simulation(countParticles, infectionRate, radius, initiallyInfected, deathRate)
         self.ui.startSimulation()
         self.ui.resumeSimulation()
 
@@ -68,7 +68,13 @@ class Presenter(QtCore.QObject):
 
     # changes the infection rate
     def changeInfectionRate(self, infectionRate):
-        self.simulation.setInfectionRate(infectionRate)
+        if self.isSimulationRunning:
+            self.simulation.setInfectionRate(infectionRate)
+
+        # changes the death rate
+    def changeDeathRate(self, deathRate):
+        if self.isSimulationRunning:
+            self.simulation.setDeathRate(deathRate)
 
     # changes the particles radius
     def changeRadius(self, radius):
@@ -88,5 +94,6 @@ class Presenter(QtCore.QObject):
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
         self.ui.speedSimulationSignal.connect(self.speedSimulation)
         self.ui.infectionRateSignal.connect(self.changeInfectionRate)
+        self.ui.deathRateSignal.connect(self.changeDeathRate)
         self.ui.radiusChangedSignal.connect(self.changeRadius)
         self.ui.export_csvSignal.connect(self.export_csv)

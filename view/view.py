@@ -13,11 +13,12 @@ from view.dialog import Dialog
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal(int, int)
+    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int)
     pauseResumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     speedSimulationSignal = QtCore.pyqtSignal(int)
     infectionRateSignal = QtCore.pyqtSignal(int)
+    deathRateSignal = QtCore.pyqtSignal(int)
     radiusChangedSignal = QtCore.pyqtSignal(int)
     export_csvSignal = QtCore.pyqtSignal()
 
@@ -61,9 +62,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_2.valueChanged.connect(self.infectionRateBoxChanged)
         self.spinBox_3.valueChanged.connect(self.radiusBoxChanged)
         self.actionExport_CSV.triggered.connect(self.export_csvClicked)
+        self.spinBox_4.valueChanged.connect(self.deathRateBoxChanged)
 
     def startSimulationClicked(self):
-        self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_3.value())
+        self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_2.value(), self.spinBox_3.value(), self.spinBox_5.value(), self.spinBox_4.value())
 
     def pauseSimulationClicked(self):
         self.pauseResumeSimulationSignal.emit()
@@ -76,6 +78,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def infectionRateBoxChanged(self):
         self.infectionRateSignal.emit(self.spinBox_2.value())
+
+    def deathRateBoxChanged(self):
+        self.deathRateSignal.emit(self.spinBox_4.value())
 
     def radiusBoxChanged(self):
         self.radiusChangedSignal.emit(self.spinBox_3.value())

@@ -2,7 +2,8 @@ import random
 
 # represents one particle in the simulation. Every particle is initialised with the state "healthy"
 class Particle:
-    def __init__(self, x, y, radius=3):
+    def __init__(self, x, y, simulation, radius=3):
+        self.simulation = simulation
         #print("Particle created")
         self.x = x
         self.y = y
@@ -37,9 +38,11 @@ class Particle:
             self.y -= 1
 
     def move(self):
-        if (self.x == 195 or self.x == 0 or self.y == 195 or self.y == 0 or self.is_colliding):
+        if self.is_colliding:
             self.calculate_delta_xy()
             self.is_colliding = False
+        if (self.x == 195 or self.x == 0 or self.y == 195 or self.y == 0):
+            self.calculate_delta_xy()
         if(self.stepX == 0 and self.stepY == 0):
             self.stepX = self.currentDeltaX
             self.stepY = self.currentDeltaY
@@ -79,7 +82,7 @@ class Particle:
             if self.infectionCounter < random.randint(600, 1200):
                 self.infectionCounter += 1
             else:
-                if random.randint(0, 100) < 8:
+                if random.randint(0, 100) < self.simulation.deathRate:
                     self.state = 'dead'
                 else:
                     self.infectionCounter = 0

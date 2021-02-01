@@ -7,23 +7,25 @@ import random
 
 
 class Simulation:
-    def __init__(self, countParticles=100, infectionRate=12, radius=5):
+    def __init__(self, countParticles=100, infectionRate=12, radius=5, initiallyInfected=1, deathRate=8):
         #print("Simulation Created")
         self.radius = radius
         self.infectionRate = infectionRate
+        self.deathRate = deathRate
         self.stepCounter = 0
         self.particleList = []
         # iterate through particleList and create as many particles as countParticles is. the positions are random
         for i in range(0, countParticles):
             rndmX = random.randint(0, 195)
             rndmY = random.randint(0, 195)
-            self.particleList.append(Particle(rndmX, rndmY))
-        self.particleList[random.randint(0, len(self.particleList) - 1)].state = "infected" # set one particles state as "infected"
+            self.particleList.append(Particle(rndmX, rndmY, self))
+        for i in range(initiallyInfected):
+            self.particleList[i].state = "infected" # initially set particles state as "infected"
 
-        self.dataX = []
-        self.dataInfected = []
-        self.dataHealthy = []
-        self.dataDead = []
+        self.dataX = [0]
+        self.dataInfected = [initiallyInfected]
+        self.dataHealthy = [countParticles - initiallyInfected]
+        self.dataDead = [0]
 
     def performStep(self):
         self.stepCounter += 1 # variable to know how many frames were already created
@@ -32,6 +34,8 @@ class Simulation:
         j = 0
         k = 0
         l = 0
+        for i in range(0, len(self.particleList)):
+            self.particleList[i].detect_collisions(self.particleList[i:], self.infectionRate, self.radius)
         for i in range(0, len(self.particleList)):
             if(self.particleList[i].state != 'dead'):
                 self.particleList[i].move()
@@ -49,8 +53,6 @@ class Simulation:
             self.dataInfected.append(j)
             self.dataHealthy.append(k)
             self.dataDead.append(l)
-        for i in range(0, len(self.particleList)):
-            self.particleList[i].detect_collisions(self.particleList[i:], self.infectionRate, self.radius)
 
 
     # function searches for collisions with infected particles and overwrites particles state with a given possibility to "infected"
@@ -66,6 +68,10 @@ class Simulation:
     # sets the infection rate
     def setInfectionRate(self, infectionRate):
         self.infectionRate = infectionRate
+
+    # sets the infection rate
+    def setDeathRate(self, deathRate):
+        self.deathRate = deathRate
 
     # sets the simulations radius
     def setRadius(self, radius):

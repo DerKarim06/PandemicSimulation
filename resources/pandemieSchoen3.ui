@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>758</width>
-    <height>651</height>
+    <height>760</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -91,7 +91,7 @@
         <item>
          <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>Infektionsrate:</string>
+           <string>Infektionsrate (in Prozent):</string>
           </property>
          </widget>
         </item>
@@ -145,7 +145,7 @@
         <item>
          <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>Platzhalter:</string>
+           <string>Sterberate (in Prozent):</string>
           </property>
          </widget>
         </item>
@@ -163,7 +163,7 @@
         <item>
          <widget class="QLabel" name="label_12">
           <property name="text">
-           <string>Platzhalter</string>
+           <string>Anzahl der bereits kranke Partikeln:</string>
           </property>
          </widget>
         </item>
@@ -186,7 +186,7 @@
         <item>
          <widget class="QLabel" name="label_11">
           <property name="text">
-           <string>Platzhalter</string>
+           <string>durchschnittliche Infektionsdauer (in Tagen):</string>
           </property>
          </widget>
         </item>
@@ -238,6 +238,89 @@
         </item>
         <item>
          <widget class="QSpinBox" name="spinBox_8"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <item>
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox_9"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_7">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox_10"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox_11"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_9">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_16">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox_12"/>
         </item>
        </layout>
       </item>
@@ -345,8 +428,20 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuExport_CSV">
+    <property name="title">
+     <string>Datei</string>
+    </property>
+    <addaction name="actionExport_CSV"/>
+   </widget>
+   <addaction name="menuExport_CSV"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExport_CSV">
+   <property name="text">
+    <string>Export CSV</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
