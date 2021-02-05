@@ -38,6 +38,9 @@ class Particle:
             self.y -= 1
 
     def move(self):
+        if self.simulation.peopleStayAtHome:
+            self.currentDeltaX = -1 * self.currentDeltaX
+            self.currentDeltaY = -1 * self.currentDeltaY
         if self.is_colliding:
             self.calculate_delta_xy()
             self.is_colliding = False
@@ -100,6 +103,9 @@ class Particle:
                         self.state = "infected"
                     else:
                         particle_list[j].state = "infected"
+
+    def setParticleRadius(self, radius):
+        self.radius = radius
 
     # def move2(self):
     #     # only move when it is not dead

@@ -19,8 +19,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     speedSimulationSignal = QtCore.pyqtSignal(int)
     infectionRateSignal = QtCore.pyqtSignal(int)
     deathRateSignal = QtCore.pyqtSignal(int)
-    radiusChangedSignal = QtCore.pyqtSignal(int)
+    infectionRadiusChangedSignal = QtCore.pyqtSignal(int)
     export_csvSignal = QtCore.pyqtSignal()
+    stayAtHomeSignal = QtCore.pyqtSignal()
+    particleRadiusChangedSignal = QtCore.pyqtSignal(int)
 
     def __init__(self):
         super(View, self).__init__()
@@ -28,31 +30,34 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.connectSignals()
         # FPS slider
         self.horizontalSlider.setMinimum(1)
-        self.horizontalSlider.setMaximum(99)
-        self.horizontalSlider.setValue(60)
-        self.horizontalSlider.setTickInterval(10)
+        self.horizontalSlider.setMaximum(10)
+        self.horizontalSlider.setValue(1)
+        self.horizontalSlider.setTickInterval(1)
         self.horizontalSlider.setTickPosition(QSlider.TicksBelow)
         # particle count spinbox
         self.spinBox.setMaximum(1000)
         self.spinBox.setValue(100)
         #infection rate spinbox
         self.spinBox_2.setValue(12)
-        # radius spinbox
+        # infectionradius spinbox
         self.spinBox_3.setValue(5)
         self.i = 0
         self.j = 0
+
+        self.spinBox_4.setValue(5)
+        self.spinBox_5.setValue(5)
 
         self.dataX = []
         self.dataInfected = []
         self.dataHealthy = []
         self.dataDead = []
 
-        self.graphWidget.setBackground('w')
+        #self.graphWidget.setBackground('w')
         self.graphWidget.setLabel('left', 'Anzahl der Partikel')
         self.graphWidget.setLabel('bottom', 'Zeit in Sekunden')
         self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=3))
         self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=3))
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3))
 
     def connectSignals(self):
         self.startSimButton.pressed.connect(self.startSimulationClicked)
@@ -60,9 +65,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resetSimButton.pressed.connect(self.resetSimulationClicked)
         self.horizontalSlider.valueChanged.connect(self.speedSimulationChanged)
         self.spinBox_2.valueChanged.connect(self.infectionRateBoxChanged)
-        self.spinBox_3.valueChanged.connect(self.radiusBoxChanged)
+        self.spinBox_3.valueChanged.connect(self.infectionRadiusBoxChanged)
         self.actionExport_CSV.triggered.connect(self.export_csvClicked)
         self.spinBox_4.valueChanged.connect(self.deathRateBoxChanged)
+        self.checkBox.clicked.connect(self.stayAtHomeClicked)
+        self.spinBox_7.valueChanged.connect(self.particleRadiusChanged)
+
+    def particleRadiusChanged(self):
+        self.particleRadiusChangedSignal.emit(self.spinBox_7.value())
 
     def startSimulationClicked(self):
         self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_2.value(), self.spinBox_3.value(), self.spinBox_5.value(), self.spinBox_4.value())
@@ -75,6 +85,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def speedSimulationChanged(self):
         self.speedSimulationSignal.emit(self.horizontalSlider.value())
+        print(self.horizontalSlider.value())
 
     def infectionRateBoxChanged(self):
         self.infectionRateSignal.emit(self.spinBox_2.value())
@@ -82,8 +93,11 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def deathRateBoxChanged(self):
         self.deathRateSignal.emit(self.spinBox_4.value())
 
-    def radiusBoxChanged(self):
-        self.radiusChangedSignal.emit(self.spinBox_3.value())
+    def infectionRadiusBoxChanged(self):
+        self.infectionRadiusChangedSignal.emit(self.spinBox_3.value())
+
+    def stayAtHomeClicked(self):
+        self.stayAtHomeSignal.emit()
 
     def export_csvClicked(self):
         self.export_csvSignal.emit()
@@ -123,7 +137,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected,
                                                   pen=pg.mkPen(color=(255, 0, 0), width=3))
         self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=3))
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3))
 
     def resumeSimulation(self):
         self.pauseSimButton.setText("Pause")
@@ -138,7 +152,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dataX = []
         self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=3))
         self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(0, 0, 0), width=3))
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3))
 
     # function visualizes the data from the simulation model in a graphicsview. It uses a new scene for every step.
     def updateParticles(self, particleList, data):

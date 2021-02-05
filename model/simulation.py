@@ -7,13 +7,14 @@ import random
 
 
 class Simulation:
-    def __init__(self, countParticles=100, infectionRate=12, radius=5, initiallyInfected=1, deathRate=8):
+    def __init__(self, countParticles=100, infectionRate=12, infectionRadius=5, initiallyInfected=1, deathRate=8):
         #print("Simulation Created")
-        self.radius = radius
+        self.infectionRadius = infectionRadius
         self.infectionRate = infectionRate
         self.deathRate = deathRate
         self.stepCounter = 0
         self.particleList = []
+        self.peopleStayAtHome = False
         # iterate through particleList and create as many particles as countParticles is. the positions are random
         for i in range(0, countParticles):
             rndmX = random.randint(0, 195)
@@ -35,7 +36,7 @@ class Simulation:
         k = 0
         l = 0
         for i in range(0, len(self.particleList)):
-            self.particleList[i].detect_collisions(self.particleList[i:], self.infectionRate, self.radius)
+            self.particleList[i].detect_collisions(self.particleList[i:], self.infectionRate, self.infectionRadius)
         for i in range(0, len(self.particleList)):
             if(self.particleList[i].state != 'dead'):
                 self.particleList[i].move()
@@ -54,6 +55,8 @@ class Simulation:
             self.dataHealthy.append(k)
             self.dataDead.append(l)
 
+    def changePeopleStayAtHome(self):
+        self.peopleStayAtHome = not self.peopleStayAtHome
 
     # function searches for collisions with infected particles and overwrites particles state with a given possibility to "infected"
     # def detectCollisions(self):
@@ -73,9 +76,13 @@ class Simulation:
     def setDeathRate(self, deathRate):
         self.deathRate = deathRate
 
-    # sets the simulations radius
-    def setRadius(self, radius):
-        self.radius = radius
+    def changeParticleRadius(self, radius):
+        for i in range(0, len(self.particleList)):
+            self.particleList[i].setParticleRadius(radius)
+
+    # sets the simulations infectionRadius
+    def setinfectionRadius(self, infectionRadius):
+        self.infectionRadius = infectionRadius
     # returns the current frame count
     def getData(self):
         return np.array([self.dataX, self.dataHealthy, self.dataInfected, self.dataDead]).T

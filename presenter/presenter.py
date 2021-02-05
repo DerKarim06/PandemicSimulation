@@ -31,9 +31,9 @@ class Presenter(QtCore.QObject):
             # self.ui.updateData(self.simulation.getData())
 
     # starts the simulation with the given arguments
-    def startSimulation(self, countParticles, infectionRate, radius, initiallyInfected, deathRate):
+    def startSimulation(self, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate):
         self.isSimulationRunning = True
-        self.simulation = Simulation(countParticles, infectionRate, radius, initiallyInfected, deathRate)
+        self.simulation = Simulation(countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate)
         self.ui.startSimulation()
         self.ui.resumeSimulation()
 
@@ -61,10 +61,7 @@ class Presenter(QtCore.QObject):
 
     # changes the FPS of the simulation
     def speedSimulation(self, value):
-        self.timer.disconnect()
-        self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.mainLoop)
-        self.timer.start(int(1000 / value))
+        self.timer.setInterval(int((1/value * 1000) / FPS))
 
     # changes the infection rate
     def changeInfectionRate(self, infectionRate):
@@ -76,16 +73,24 @@ class Presenter(QtCore.QObject):
         if self.isSimulationRunning:
             self.simulation.setDeathRate(deathRate)
 
-    # changes the particles radius
-    def changeRadius(self, radius):
+    # changes the particles infectionRadius
+    def changeinfectionRadius(self, infectionRadius):
         if(self.simulation != None):
-            self.simulation.setRadius(radius)
+            self.simulation.setinfectionRadius(infectionRadius)
 
     def export_csv(self):
         if(self.isSimulationPaused == True):
             self.ui.ask_granularity()
         else:
             self.ui.showExportAlert(self.simulation)
+
+    def changeStayAtHome(self):
+        if self.isSimulationRunning:
+            self.simulation.changePeopleStayAtHome()
+
+    def changeParticleRadius(self, radius):
+        if self.simulation:
+            self.simulation.changeParticleRadius(radius)
 
     def _connectUIElements(self) -> None:
         # elements of the main window
@@ -95,5 +100,7 @@ class Presenter(QtCore.QObject):
         self.ui.speedSimulationSignal.connect(self.speedSimulation)
         self.ui.infectionRateSignal.connect(self.changeInfectionRate)
         self.ui.deathRateSignal.connect(self.changeDeathRate)
-        self.ui.radiusChangedSignal.connect(self.changeRadius)
+        self.ui.infectionRadiusChangedSignal.connect(self.changeinfectionRadius)
         self.ui.export_csvSignal.connect(self.export_csv)
+        self.ui.stayAtHomeSignal.connect(self.changeStayAtHome)
+        self.ui.particleRadiusChangedSignal.connect(self.changeParticleRadius)
