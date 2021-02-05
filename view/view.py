@@ -85,7 +85,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def speedSimulationChanged(self):
         self.speedSimulationSignal.emit(self.horizontalSlider.value())
-        print(self.horizontalSlider.value())
+        self.label_17.setText("x" + str(self.horizontalSlider.value()))
 
     def infectionRateBoxChanged(self):
         self.infectionRateSignal.emit(self.spinBox_2.value())
