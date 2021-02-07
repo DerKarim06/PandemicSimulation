@@ -10,10 +10,15 @@ import pyqtgraph as pg
 from view.mainwindow import Ui_MainWindow
 from view.dialog import Dialog
 
+import resources.strings as strings
+
+
+ELLIPSIS_DIMENSION = 5
+SCENE_DIMENSION = 200
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int)
+    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int)
     pauseResumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     speedSimulationSignal = QtCore.pyqtSignal(int)
@@ -27,6 +32,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     maxDaysInfectedSignal = QtCore.pyqtSignal(int)
 
     def __init__(self):
+        """create the gui and therefore the view.
+        It also initializes all of the widgets to their initial value"""
         super(View, self).__init__()
         self.setupUi(self)
         self.connectSignals()
@@ -58,13 +65,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dataDead = []
 
         #self.graphWidget.setBackground('w')
-        self.graphWidget.setLabel('left', 'Anzahl der Partikel')
-        self.graphWidget.setLabel('bottom', 'Zeit in Sekunden')
+        self.graphWidget.setLabel('left', strings.COUNT_OF_PARTICLES)
+        self.graphWidget.setLabel('bottom', strings.TIME_IN_SECONDS)
         self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=3))
         self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
         self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3))
 
     def connectSignals(self):
+        """this function is used to connect all of the event handlers for the gui with functions in the view"""
         self.startSimButton.pressed.connect(self.startSimulationClicked)
         self.pauseSimButton.pressed.connect(self.pauseSimulationClicked)
         self.resetSimButton.pressed.connect(self.resetSimulationClicked)
@@ -79,68 +87,85 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_10.valueChanged.connect(self.maxDaysInfectedChanged)
 
     def minDaysInfectedChanged(self):
+        """emits minDaysInfectedSignal with the value of spinBox_9"""
         self.minDaysInfectedSignal.emit(self.spinBox_9.value())
 
     def maxDaysInfectedChanged(self):
+        """emits axDaysInfectedSignal with the value of spinBox_10"""
         self.maxDaysInfectedSignal.emit(self.spinBox_10.value())
 
     def particleRadiusChanged(self):
+        """emits particleRadiusChangedSignal with the value of spinBox_7"""
         self.particleRadiusChangedSignal.emit(self.spinBox_7.value())
 
     def startSimulationClicked(self):
-        self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_2.value(), self.spinBox_3.value(), self.spinBox_5.value(), self.spinBox_4.value(), self.spinBox_9.value(), self.spinBox_10.value())
+        """emits the particleRadiusChangedSignal with the value of:
+            SCENE_DIMENSION - ELLIPSIS_DIMENSION: maximum to move to the right,
+            SCENE_DIMENSION - ELLIPSIS_DIMENSION: maximum to move down,
+            spinBox,
+            spinBox_2,
+            spinBox_3,
+            spinBox_5,
+            spinBox_4,
+            spinBox_9,
+            spinBox_10"""
+        self.startSimulationSignal.emit(SCENE_DIMENSION - ELLIPSIS_DIMENSION, SCENE_DIMENSION - ELLIPSIS_DIMENSION, self.spinBox.value(), self.spinBox_2.value(), self.spinBox_3.value(), self.spinBox_5.value(), self.spinBox_4.value(), self.spinBox_9.value(), self.spinBox_10.value())
 
     def pauseSimulationClicked(self):
+        """emits pauseResumeSimulationSignal"""
         self.pauseResumeSimulationSignal.emit()
 
     def resetSimulationClicked(self):
+        """emits resetSimulationSignal"""
         self.resetSimulationSignal.emit()
 
     def speedSimulationChanged(self):
+        """emits speedSimulationSignal with value of horizontalSlider
+        Additionaly sets label_17 text to a new factor of speed"""
         self.speedSimulationSignal.emit(self.horizontalSlider.value())
         self.label_17.setText("x" + str(self.horizontalSlider.value()))
 
     def infectionRateBoxChanged(self):
+        """emits infectionRateSignal with value of spinBox_2"""
         self.infectionRateSignal.emit(self.spinBox_2.value())
 
     def deathRateBoxChanged(self):
+        """emits deathRateSignal with value of spinBox_4"""
         self.deathRateSignal.emit(self.spinBox_4.value())
 
     def infectionRadiusBoxChanged(self):
+        """emits infectionRadiusChangedSignal with value of spinBox_3"""
         self.infectionRadiusChangedSignal.emit(self.spinBox_3.value())
 
     def stayAtHomeClicked(self):
+        """emits stayAtHomeSignal"""
         self.stayAtHomeSignal.emit()
 
     def export_csvClicked(self):
+        """emits export_csvSignal"""
         self.export_csvSignal.emit()
     
     def ask_granularity(self):
+        """opens a dialog for the user to enter a given granularity for the export"""
         self.d = Dialog()
         self.d.finishedSignal.connect(self.export_csv)
         self.d.exec_()
 
     def export_csv(self, granularity):
+        """function to export a csv file of the gathered data within the simulation. The function opens
+        a FileDialog for the user to enter a path to save the csv file"""
         name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
         print(name[0])
         csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataInfected, self.dataDead]).T
-        np.savetxt(name[0], csvMatrix[0::granularity], delimiter=",", fmt='%i', header="Seconds, Healthy, Infected, Dead")
-
-    def showExportAlert(self, simulation):
-        dlg = QtWidgets.QDialog(self)
-        dlg.setWindowTitle("Fehler beim Export!")
-        label = QtWidgets.QLabel(dlg)
-        if simulation != None:
-            label.setText("Export bei laufender Simulation nicht möglich!")
-        else:
-            label.setText("Export bei noch nicht gestarteter Simulation nicht möglich!")
-        label.adjustSize()
-        label.move(100, 60)
-        dlg.exec_()
+        np.savetxt(name[0], csvMatrix[0::granularity], delimiter=",", fmt='%i', header=strings.CSV_HEADER)
 
     def showAlert(self, message):
+        """this function shows an alert to the user
+        Args:
+            message: the message that should be show to the user
+        """
         dlg = QtWidgets.QDialog(self)
-        dlg.setWindowTitle("Fehler beim Export!")
+        dlg.setWindowTitle(strings.ERROR)
         label = QtWidgets.QLabel(dlg)
         label.setText(message)
         label.adjustSize()
@@ -148,9 +173,11 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         dlg.exec_()
 
     def pauseSimulation(self):
-        self.pauseSimButton.setText("Weiter")
+        """this function changes the text of pauseSimButton to Weiter"""
+        self.pauseSimButton.setText(strings.CONTINUE)
 
     def startSimulation(self):
+        """this function clears the graphWidget and initiates arrays that hold the data while the simulation is processing"""
         self.graphWidget.clear()
         self.dataDead = []
         self.dataHealthy = []
@@ -162,10 +189,11 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3))
 
     def resumeSimulation(self):
-        self.pauseSimButton.setText("Pause")
+        """this function changes the text of pauseSimButton to Pause"""
+        self.pauseSimButton.setText(strings.PAUSE)
 
-    # resets by clearing the scene
     def resetSimulation(self):
+        """this function resets the simulation by clearing the scene and the graphWidget and reinitialising the data"""
         self.graphicsView_2.scene().clear()
         self.graphWidget.clear()
         self.dataDead = []
@@ -178,18 +206,25 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # function visualizes the data from the simulation model in a graphicsview. It uses a new scene for every step.
     def updateParticles(self, particleList, data):
-        scene = QtWidgets.QGraphicsScene(0, 0, 200, 200)    # scene with 200 x 200 size
+        """this function visualizes the retrieved data from the simulation model in a graphview.
+        For every step a new scene is used.
+
+        Args:
+            particleList: the list that stores all of the particles that should be drawn
+            data: an array of all of the data that holds statistics to the current simulation
+        """
+        scene = QtWidgets.QGraphicsScene(0, 0, SCENE_DIMENSION, SCENE_DIMENSION)    # scene with 200 x 200 size
         for i in range(0, len(particleList)):
-            if(particleList[i].state == "healthy"):
+            if(particleList[i].state == strings.HEALTHY):
                 pen = QPen(Qt.darkGreen)
                 brush = QBrush(Qt.green)
-            elif(particleList[i].state == "infected"):
+            elif(particleList[i].state == strings.INFECTED):
                 pen = QPen(Qt.darkRed)
                 brush = QBrush(Qt.red)
-            else:   # only for later use (dead particles)
+            else:   # == strings.DEAD
                 pen = QPen(Qt.black)
                 brush = QBrush(Qt.darkGray)
-            scene.addEllipse(QRectF(particleList[i].x, particleList[i].y, 5, 5), pen, brush)
+            scene.addEllipse(QRectF(particleList[i].x, particleList[i].y, ELLIPSIS_DIMENSION, ELLIPSIS_DIMENSION), pen, brush)
         self.graphicsView_2.setScene(scene)
         self.graphicsView_2.ensureVisible(scene.sceneRect())
         self.graphicsView_2.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)
