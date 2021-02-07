@@ -7,7 +7,7 @@ import random
 
 
 class Simulation:
-    def __init__(self, countParticles=100, infectionRate=12, infectionRadius=5, initiallyInfected=1, deathRate=8):
+    def __init__(self, countParticles=100, infectionRate=12, infectionRadius=5, initiallyInfected=1, deathRate=8, minDaysInfected=10, maxDaysInfected=20):
         #print("Simulation Created")
         self.infectionRadius = infectionRadius
         self.infectionRate = infectionRate
@@ -27,6 +27,9 @@ class Simulation:
         self.dataInfected = [initiallyInfected]
         self.dataHealthy = [countParticles - initiallyInfected]
         self.dataDead = [0]
+
+        self.minDaysInfected = minDaysInfected
+        self.maxDaysInfected = maxDaysInfected
 
     def performStep(self):
         self.stepCounter += 1 # variable to know how many frames were already created
@@ -79,6 +82,12 @@ class Simulation:
     def changeParticleRadius(self, radius):
         for i in range(0, len(self.particleList)):
             self.particleList[i].setParticleRadius(radius)
+
+    def setMinDaysInfected(self, minDaysInfected):
+        self.minDaysInfected = minDaysInfected
+
+    def setMaxDaysInfected(self, maxDaysInfected):
+        self.maxDaysInfected = maxDaysInfected
 
     # sets the simulations infectionRadius
     def setinfectionRadius(self, infectionRadius):

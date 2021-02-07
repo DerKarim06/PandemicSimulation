@@ -82,7 +82,7 @@ class Particle:
 
     def incrementInfectionCounter(self):
         if self.state == 'infected':
-            if self.infectionCounter < random.randint(600, 1200):
+            if self.infectionCounter < random.randint(self.simulation.minDaysInfected * 60, self.simulation.maxDaysInfected * 60):
                 self.infectionCounter += 1
             else:
                 if random.randint(0, 100) < self.simulation.deathRate:

@@ -31,9 +31,9 @@ class Presenter(QtCore.QObject):
             # self.ui.updateData(self.simulation.getData())
 
     # starts the simulation with the given arguments
-    def startSimulation(self, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate):
+    def startSimulation(self, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected):
         self.isSimulationRunning = True
-        self.simulation = Simulation(countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate)
+        self.simulation = Simulation(countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected)
         self.ui.startSimulation()
         self.ui.resumeSimulation()
 
@@ -92,6 +92,20 @@ class Presenter(QtCore.QObject):
         if self.simulation:
             self.simulation.changeParticleRadius(radius)
 
+    def changeMinDaysInfected(self, minDaysInfected):
+        if self.simulation:
+            if self.simulation.maxDaysInfected >= minDaysInfected:
+                self.simulation.setMinDaysInfected(minDaysInfected)
+            else:
+                self.ui.showAlert("Die minimale Infektionsdauer kann nicht über der maximalen Infektionsdauer liegen!")
+
+    def changeMaxDaysInfected(self, maxDaysInfected):
+        if self.simulation:
+            if self.simulation.minDaysInfected <= maxDaysInfected:
+                self.simulation.setMaxDaysInfected(maxDaysInfected)
+            else:
+                self.ui.showAlert("Die maximale Infektionsdauer kann nicht unter der minimalen Infektionsdauer liegen!")
+
     def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
@@ -104,3 +118,5 @@ class Presenter(QtCore.QObject):
         self.ui.export_csvSignal.connect(self.export_csv)
         self.ui.stayAtHomeSignal.connect(self.changeStayAtHome)
         self.ui.particleRadiusChangedSignal.connect(self.changeParticleRadius)
+        self.ui.minDaysInfectedSignal.connect(self.changeMinDaysInfected)
+        self.ui.maxDaysInfectedSignal.connect(self.changeMaxDaysInfected)

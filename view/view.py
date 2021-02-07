@@ -13,7 +13,7 @@ from view.dialog import Dialog
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int)
+    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int)
     pauseResumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     speedSimulationSignal = QtCore.pyqtSignal(int)
@@ -23,6 +23,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     export_csvSignal = QtCore.pyqtSignal()
     stayAtHomeSignal = QtCore.pyqtSignal()
     particleRadiusChangedSignal = QtCore.pyqtSignal(int)
+    minDaysInfectedSignal = QtCore.pyqtSignal(int)
+    maxDaysInfectedSignal = QtCore.pyqtSignal(int)
 
     def __init__(self):
         super(View, self).__init__()
@@ -70,12 +72,20 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_4.valueChanged.connect(self.deathRateBoxChanged)
         self.checkBox.clicked.connect(self.stayAtHomeClicked)
         self.spinBox_7.valueChanged.connect(self.particleRadiusChanged)
+        self.spinBox_9.valueChanged.connect(self.minDaysInfectedChanged)
+        self.spinBox_10.valueChanged.connect(self.maxDaysInfectedChanged)
+
+    def minDaysInfectedChanged(self):
+        self.minDaysInfectedSignal.emit(self.spinBox_9.value())
+
+    def maxDaysInfectedChanged(self):
+        self.maxDaysInfectedSignal.emit(self.spinBox_10.value())
 
     def particleRadiusChanged(self):
         self.particleRadiusChangedSignal.emit(self.spinBox_7.value())
 
     def startSimulationClicked(self):
-        self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_2.value(), self.spinBox_3.value(), self.spinBox_5.value(), self.spinBox_4.value())
+        self.startSimulationSignal.emit(self.spinBox.value(), self.spinBox_2.value(), self.spinBox_3.value(), self.spinBox_5.value(), self.spinBox_4.value(), self.spinBox_9.value(), self.spinBox_10.value())
 
     def pauseSimulationClicked(self):
         self.pauseResumeSimulationSignal.emit()
@@ -121,6 +131,15 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             label.setText("Export bei laufender Simulation nicht möglich!")
         else:
             label.setText("Export bei noch nicht gestarteter Simulation nicht möglich!")
+        label.adjustSize()
+        label.move(100, 60)
+        dlg.exec_()
+
+    def showAlert(self, message):
+        dlg = QtWidgets.QDialog(self)
+        dlg.setWindowTitle("Fehler beim Export!")
+        label = QtWidgets.QLabel(dlg)
+        label.setText(message)
         label.adjustSize()
         label.move(100, 60)
         dlg.exec_()
