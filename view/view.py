@@ -49,6 +49,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_4.setValue(5)
         self.spinBox_5.setValue(5)
 
+        self.spinBox_9.setValue(10)
+        self.spinBox_10.setValue(20)
+
         self.dataX = []
         self.dataInfected = []
         self.dataHealthy = []
