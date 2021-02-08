@@ -4,7 +4,7 @@ from view.view import View
 from view.dialog import Dialog
 from model.simulation import Simulation
 
-import resources.strings as strings
+import resources.constants as constants
 
 FPS = 60
 
@@ -34,23 +34,30 @@ class Presenter(QtCore.QObject):
             self.simulation.performStep()
             self.ui.updateParticles(self.simulation.getParticles(), self.simulation.getData())
 
-    def startSimulation(self, xBorder, yBorder, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected):
+    def startSimulation(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage):
         """this function is used to initiate a simulation. It starts the simulation with the given arguments
         Args:
             xBorder: the maximum x-coordinate particles are allowed to move to the right
             yBorder: the maximum y-coordinate particles are allowed to move down
-            countParticles: the number of particles the simulation should hold (default: 100)
+            percentageImmune: the percentage of being immune after recovery
+            minImmuneDuration: the minimum duration of being immune
+            maxImmuneDuration: the maximum duration of being immune
+            countParticles: the number of particles the simulation should hold
             infectionRate: the initially set infection rate which with particles can infect each other
             infectionRadius: the initially set infection radius, which is used to detect collisions of the particles
             initiallyInfected: the initial number of particles that are infected by the start of the simulation
             deathRate: the initially set death rate within the simulation
             minDaysInfected: the minimum of days particles have to be infected
             maxDaysInfected the maximum of day particles can be infected up to
+            quarantinePercentage: the percentage of particles being in quarantine when infected
         """
-        self.isSimulationRunning = True
-        self.simulation = Simulation(xBorder, yBorder, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected)
-        self.ui.startSimulation()
-        self.ui.resumeSimulation()
+        if countParticles < initiallyInfected:
+            self.ui.showAlert("Es können nicht mehr Partikel infiziert sein als es überhaupt gibt.")
+        else:
+            self.isSimulationRunning = True
+            self.simulation = Simulation(xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage)
+            self.ui.startSimulation()
+            self.ui.resumeSimulation()
 
     def pauseResumeSimulation(self):
         """this function is used to pause or to resume the current simulation"""
@@ -137,7 +144,7 @@ class Presenter(QtCore.QObject):
             if self.simulation.maxDaysInfected >= minDaysInfected:
                 self.simulation.setMinDaysInfected(minDaysInfected)
             else:
-                self.ui.showAlert(strings.MIN_UNDER_MAX_ALERT)
+                self.ui.showAlert(constants.INFECTION_MIN_OVER_MAX_ALERT_MAX_ALERT)
 
     def changeMaxDaysInfected(self, maxDaysInfected):
         """this function changes the maximum days particles are able to be infected in the current simulation
@@ -148,7 +155,45 @@ class Presenter(QtCore.QObject):
             if self.simulation.minDaysInfected <= maxDaysInfected:
                 self.simulation.setMaxDaysInfected(maxDaysInfected)
             else:
-                self.ui.showAlert(strings.MAX_UNDER_MIN_ALERT)
+                self.ui.showAlert(constants.INFECTION_MAX_UNDER_MIN_ALERT)
+
+    def changePercentageImmune(self, percentage):
+        """this function changes the percentage of particles to be immune in the current simulation
+        Args:
+            percentage: the new percentage of particles being immune afterwards
+        """
+        self.simulation.setPercentageImmune(percentage)
+
+    def changeMaxImmuneDuration(self, duration):
+        """this function changes the maximum duration particles are allow to be immune in the current simulation
+        Args:
+            duration: the new maximum duration to be immune
+        """
+        if self.simulation:
+            if self.simulation.minImmuneDuration <= duration:
+                self.simulation.setMaxImmuneDuration(duration)
+            else:
+                self.ui.showAlert(constants.IMMUNE_MAX_UNDER_MIN_ALERT)
+
+    def changeMinImmuneDuration(self, duration):
+        """this function changes the minimum duration particles are allow to be immune in the current simulation
+        Args:
+            duration: the new minimum duration to be immune
+        """
+        if self.simulation:
+            if self.simulation.maxImmuneDuration >= duration:
+                self.simulation.setMinImmuneDuration(duration)
+            else:
+                self.ui.showAlert(constants.IMMUNE_MIN_OVER_MAX_ALERT)
+
+    def changeQuarantinePercentage(self, percentage):
+        """this function changes the percentage of particles that are in quarantine while being infected
+        Args:
+            percentage: the new percentage of quarantining particles
+        """
+        if self.simulation:
+            self.simulation.setQuarantinePercentage(percentage)
+
 
     def _connectUIElements(self) -> None:
         """this function is used to connect all of the signals between the view and the presenter"""
@@ -165,3 +210,7 @@ class Presenter(QtCore.QObject):
         self.ui.particleRadiusChangedSignal.connect(self.changeParticleRadius)
         self.ui.minDaysInfectedSignal.connect(self.changeMinDaysInfected)
         self.ui.maxDaysInfectedSignal.connect(self.changeMaxDaysInfected)
+        self.ui.percentageImmuneSignal.connect(self.changePercentageImmune)
+        self.ui.maxImmuneDurationSignal.connect(self.changeMaxImmuneDuration)
+        self.ui.minImmuneDurationSignal.connect(self.changeMinImmuneDuration)
+        self.ui.quarantinePercentageSignal.connect(self.changeQuarantinePercentage)
