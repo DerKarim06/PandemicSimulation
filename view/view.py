@@ -8,7 +8,8 @@ from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 
 from view.mainwindow import Ui_MainWindow
-from view.dialog import Dialog
+from view.dialogCSV import DialogCSV
+from view.dialogMultipleSim import DialogMultipleSim
 
 import resources.constants as constants
 
@@ -33,6 +34,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     minImmuneDurationSignal = QtCore.pyqtSignal(int)
     maxImmuneDurationSignal = QtCore.pyqtSignal(int)
     quarantinePercentageSignal = QtCore.pyqtSignal(int)
+    multipleSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, int, DialogMultipleSim)
 
     def __init__(self):
         """creates the gui and therefore the view.
@@ -99,6 +101,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_maxImmuneDuration.valueChanged.connect(self.maxImmuneDurationChanged)
         self.spinBox_minImmuneDuration.valueChanged.connect(self.minImmuneDurationChanged)
         self.spinBox_quarantinePercentage.valueChanged.connect(self.quarantinePercentageChanged)
+        self.actionMehrere_Simulationen_ausf_hren.triggered.connect(self.multipleSimDialog)
 
     def quarantinePercentageChanged(self):
         """emits quarantinePercentageSignal with the value of spinBox_quarantinePercentage"""
@@ -188,7 +191,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     
     def ask_granularity(self):
         """opens a dialog for the user to enter a given granularity for the export"""
-        self.d = Dialog()
+        self.d = DialogCSV()
         self.d.finishedSignal.connect(self.export_csv)
         self.d.exec_()
 
@@ -199,6 +202,35 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         print(name[0])
         csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataImmune, self.dataInfected, self.dataDead]).T
         np.savetxt(name[0], csvMatrix[0::granularity], delimiter=",", fmt='%i', header=constants.CSV_HEADER)
+
+    def multipleSimDialog(self):
+        self.d = DialogMultipleSim()
+        self.d.finishedSignal.connect(self.runMultipleSimulations)
+        self.d.exec_()
+
+    def runMultipleSimulations(self, simCount, simDuration, particlesCount, infectedParticlesCount, infectionRate,
+                               infectionRadius, deathRate, minInfectionDuration, maxInfectionDuration, percentageImmune,
+                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, dialog):
+        print("simCount:", simCount)
+        print("simDuration:", simDuration)
+        print("particlesCount:", particlesCount)
+        print("infectedParticlesCount:", infectedParticlesCount)
+        print("infectionRate:", infectionRate)
+        print("infectionRadius:", infectionRadius)
+        print("deathRate:", deathRate)
+        print("minInfectionDuration:", minInfectionDuration)
+        print("maxInfectionDuration:", maxInfectionDuration)
+        print("percentageImmune:", percentageImmune)
+        print("minImmuneDuration:", minImmuneDuration)
+        print("maxImmuneDuration:", maxImmuneDuration)
+        print("distanceRadius:", distanceRadius)
+        print("quarantinePercentage:", quarantinePercentage)
+
+        self.multipleSimulationSignal.emit(simCount, simDuration, particlesCount, infectedParticlesCount, infectionRate,
+                               infectionRadius, deathRate, minInfectionDuration, maxInfectionDuration, percentageImmune,
+                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, dialog)
+
+
 
     def showAlert(self, message):
         """this function shows an alert to the user

@@ -118,7 +118,7 @@ class Particle:
     def incrementImmuneCounter(self):
         """this function increment the immuneCounter on the particle it is used on"""
         if self.state == constants.IMMUNE:
-            print(self.immuneCounter, "|", self.simulation.minImmuneDuration * FRAMES_FOR_ONE_DAY, "|", self.simulation.maxImmuneDuration * FRAMES_FOR_ONE_DAY)
+            # print(self.immuneCounter, "|", self.simulation.minImmuneDuration * FRAMES_FOR_ONE_DAY, "|", self.simulation.maxImmuneDuration * FRAMES_FOR_ONE_DAY)
             if self.immuneCounter >= random.randint(self.simulation.minImmuneDuration * FRAMES_FOR_ONE_DAY, self.simulation.maxImmuneDuration * FRAMES_FOR_ONE_DAY):
                 self.state = constants.HEALTHY
                 self.immuneCounter = 0

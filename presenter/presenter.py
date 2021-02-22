@@ -1,7 +1,7 @@
 from PyQt5 import QtCore
 
 from view.view import View
-from view.dialog import Dialog
+from view.dialogCSV import DialogCSV
 from model.simulation import Simulation
 
 import resources.constants as constants
@@ -14,7 +14,7 @@ class Presenter(QtCore.QObject):
         super(Presenter, self).__init__()
         # create main window
         self.ui = View()
-        self.ui2 = Dialog()
+        self.ui2 = DialogCSV()
         self.simulation = None
         self.isSimulationRunning = False
         self.isSimulationPaused = False
@@ -54,6 +54,8 @@ class Presenter(QtCore.QObject):
         if countParticles < initiallyInfected:
             self.ui.showAlert("Es können nicht mehr Partikel infiziert sein als es überhaupt gibt.")
         else:
+            if self.isSimulationPaused:
+                self.resetSimulation()
             self.isSimulationRunning = True
             self.simulation = Simulation(xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage)
             self.ui.startSimulation()
@@ -194,6 +196,23 @@ class Presenter(QtCore.QObject):
         if self.simulation:
             self.simulation.setQuarantinePercentage(percentage)
 
+    def startMultipleSimulations(self, simCount, simDuration, countParticles, initiallyInfected, infectionRate,
+                               infectionRadius, deathRate, minDaysInfected, maxDaysInfected, percentageImmune,
+                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, dialog):
+        self.simulations = []
+        for i in range(0, simCount):
+            s = Simulation(0, 195, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage)
+            s.changeParticleRadius(distanceRadius)
+            self.simulations.append(s)
+        for i in range(0, simDuration*60):
+            data = []
+            for j in range(0, len(self.simulations)):
+                self.simulations[j].performStep()
+                data.append(self.simulations[j].getData())
+                dialog.updateData(data)
+
+        for s in self.simulations:
+            print(s.getData()[-1])
 
     def _connectUIElements(self) -> None:
         """this function is used to connect all of the signals between the view and the presenter"""
@@ -214,3 +233,4 @@ class Presenter(QtCore.QObject):
         self.ui.maxImmuneDurationSignal.connect(self.changeMaxImmuneDuration)
         self.ui.minImmuneDurationSignal.connect(self.changeMinImmuneDuration)
         self.ui.quarantinePercentageSignal.connect(self.changeQuarantinePercentage)
+        self.ui.multipleSimulationSignal.connect(self.startMultipleSimulations)

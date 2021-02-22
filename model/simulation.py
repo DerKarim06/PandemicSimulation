@@ -97,6 +97,7 @@ class Simulation:
             self.dataHealthy.append(k)
             self.dataImmune.append(m)
             self.dataDead.append(l)
+        print("test")
 
     def setMaxImmuneDuration(self, duration):
         """sets the maximum duration of particle allowed to be immune
