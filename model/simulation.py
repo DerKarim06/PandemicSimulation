@@ -9,7 +9,7 @@ FRAMES_FOR_ONE_DAY = 60
 
 class Simulation:
     """This class represents the whole simulation holding all of the particles"""
-    def __init__(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles=100, infectionRate=12, infectionRadius=5, initiallyInfected=1, deathRate=8, minDaysInfected=10, maxDaysInfected=20, quarantinePercentage=25):
+    def __init__(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles=100, infectionRate=12, infectionRadius=5, initiallyInfected=1, deathRate=8, minDaysInfected=10, maxDaysInfected=20, quarantinePercentage=25, vaccinationActivated=False, vaccinationBegin=0, vaccinationSpeed=0, vaccinateHealthyFirst=False):
         """this is the constructor of the simulation class. The simulation additionally holds lists in which the
         simulations data is stored for future exports
 
@@ -50,6 +50,7 @@ class Simulation:
         self.dataHealthy = [countParticles - initiallyInfected]
         self.dataImmune = [0]
         self.dataDead = [0]
+        self.dataVaccinated = [0]
 
         self.minDaysInfected = minDaysInfected
         self.maxDaysInfected = maxDaysInfected
@@ -57,6 +58,12 @@ class Simulation:
         self.percentageImmune = percentageImmune
         self.maxImmuneDuration = maxImmuneDuration
         self.minImmuneDuration = minImmuneDuration
+
+        self.vaccinationActivated = vaccinationActivated
+        self.vaccinationBegin = vaccinationBegin * FRAMES_FOR_ONE_DAY
+        self.vaccinationSpeed = vaccinationSpeed
+        print(vaccinationSpeed)
+        self.vaccinateHealthyFirst = vaccinateHealthyFirst
 
         self.quarantinePercentage = quarantinePercentage
 
@@ -73,6 +80,8 @@ class Simulation:
         k = 0
         l = 0
         m = 0
+        n = 0
+        if self.vaccinationActivated: self.performVaccinations()
         for i in range(0, len(self.particleList)):
             self.particleList[i].detect_collisions(self.particleList[i:], self.infectionRate, self.infectionRadius)
         for i in range(0, len(self.particleList)):
@@ -91,13 +100,38 @@ class Simulation:
                     m += 1
                 if (self.particleList[i].state == constants.HEALTHY):
                     k += 1
+                if (self.particleList[i].state == constants.VACCINATED):
+                    n += 1
         if (self.stepCounter % FRAMES_FOR_ONE_DAY == 0): #add the variables to the lists
             self.dataX.append(int(self.stepCounter / FRAMES_FOR_ONE_DAY))
             self.dataInfected.append(j)
             self.dataHealthy.append(k)
             self.dataImmune.append(m)
             self.dataDead.append(l)
+            self.dataVaccinated.append(n)
         print("test")
+
+    def performVaccinations(self):
+        if self.stepCounter >= self.vaccinationBegin and self.stepCounter % 60 == 0:
+            vaccinationCounter = 0
+            if self.vaccinateHealthyFirst:
+                for i in range(0, len(self.particleList)):
+                    if vaccinationCounter >= self.vaccinationSpeed: break
+                    if self.particleList[i].state == constants.HEALTHY:
+                        self.particleList[i].vaccinate()
+                        vaccinationCounter += 1
+                if vaccinationCounter < self.vaccinationSpeed:
+                    for i in range(0, len(self.particleList)):
+                        if vaccinationCounter >= self.vaccinationSpeed: break
+                        if self.particleList[i].state == constants.IMMUNE:
+                            self.particleList[i].vaccinate()
+                            vaccinationCounter += 1
+            else:
+                for i in range(0, len(self.particleList)):
+                    if vaccinationCounter >= self.vaccinationSpeed: break
+                    if self.particleList[i].state == constants.HEALTHY or self.particleList[i].state == constants.IMMUNE:
+                        self.particleList[i].vaccinate()
+                        vaccinationCounter += 1
 
     def setMaxImmuneDuration(self, duration):
         """sets the maximum duration of particle allowed to be immune
@@ -186,7 +220,7 @@ class Simulation:
         Returns:
             a numpy array holding the count of healthy, infected and dead particles to each step count
         """
-        return np.array([self.dataX, self.dataHealthy, self.dataImmune, self.dataInfected, self.dataDead]).T
+        return np.array([self.dataX, self.dataHealthy, self.dataImmune, self.dataInfected, self.dataDead, self.dataVaccinated]).T
 
     def getParticles(self):
         """this function returns the particle list

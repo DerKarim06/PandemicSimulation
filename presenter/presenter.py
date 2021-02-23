@@ -34,7 +34,7 @@ class Presenter(QtCore.QObject):
             self.simulation.performStep()
             self.ui.updateParticles(self.simulation.getParticles(), self.simulation.getData())
 
-    def startSimulation(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage):
+    def startSimulation(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage, vaccinationActivated, vaccinationBegin, vaccinationSpeed, vaccinateHealthyFirst):
         """this function is used to initiate a simulation. It starts the simulation with the given arguments
         Args:
             xBorder: the maximum x-coordinate particles are allowed to move to the right
@@ -51,13 +51,14 @@ class Presenter(QtCore.QObject):
             maxDaysInfected the maximum of day particles can be infected up to
             quarantinePercentage: the percentage of particles being in quarantine when infected
         """
+        print("debug:", vaccinationSpeed)
         if countParticles < initiallyInfected:
             self.ui.showAlert("Es können nicht mehr Partikel infiziert sein als es überhaupt gibt.")
         else:
             if self.isSimulationPaused:
                 self.resetSimulation()
             self.isSimulationRunning = True
-            self.simulation = Simulation(xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage)
+            self.simulation = Simulation(xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage, vaccinationActivated, vaccinationBegin, vaccinationSpeed, vaccinateHealthyFirst)
             self.ui.startSimulation()
             self.ui.resumeSimulation()
 
@@ -198,10 +199,10 @@ class Presenter(QtCore.QObject):
 
     def startMultipleSimulations(self, simCount, simDuration, countParticles, initiallyInfected, infectionRate,
                                infectionRadius, deathRate, minDaysInfected, maxDaysInfected, percentageImmune,
-                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, dialog):
+                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, vaccinationActivated, vaccinationDate, vaccinationSpeed, vaccinateHealthyFirst, dialog):
         self.simulations = []
         for i in range(0, simCount):
-            s = Simulation(0, 195, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage)
+            s = Simulation(0, 195, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage, vaccinationActivated, vaccinationDate, vaccinationSpeed, vaccinateHealthyFirst)
             s.changeParticleRadius(distanceRadius)
             self.simulations.append(s)
         for i in range(0, simDuration*60):

@@ -154,3 +154,6 @@ class Particle:
         Args:
             radius: the radius that should be set"""
         self.radius = radius
+
+    def vaccinate(self):
+        self.state = constants.VACCINATED

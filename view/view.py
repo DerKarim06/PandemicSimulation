@@ -18,7 +18,7 @@ SCENE_DIMENSION = 200
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int)
+    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, bool, int, int, bool)
     pauseResumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     speedSimulationSignal = QtCore.pyqtSignal(int)
@@ -34,7 +34,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     minImmuneDurationSignal = QtCore.pyqtSignal(int)
     maxImmuneDurationSignal = QtCore.pyqtSignal(int)
     quarantinePercentageSignal = QtCore.pyqtSignal(int)
-    multipleSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, int, DialogMultipleSim)
+    multipleSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, int, bool, int, int, bool, DialogMultipleSim)
 
     def __init__(self):
         """creates the gui and therefore the view.
@@ -73,15 +73,25 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dataHealthy = []
         self.dataDead = []
         self.dataImmune = []
+        self.dataVaccinated = []
 
         # set initial configuration for the graphWidget
         # self.graphWidget.setBackground('w')
+        self.graphWidget.addLegend()
         self.graphWidget.setLabel('left', constants.COUNT_OF_PARTICLES)
         self.graphWidget.setLabel('bottom', constants.TIME_IN_SECONDS)
-        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=3))
-        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3))
-        self.plotImmune = self.graphWidget.plot(self.dataX, self.dataImmune, pen=pg.mkPen(color=(255, 255, 0), width=3))
+        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected,
+                                                  pen=pg.mkPen(color=(255, 0, 0), width=3), name='Infiziert')
+        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3),
+                                                 name='Gesund')
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3),
+                                              name='Gestorben')
+        self.plotImmune = self.graphWidget.plot(self.dataX, self.dataImmune, pen=pg.mkPen(color=(255, 255, 0), width=3),
+                                                name='Immun')
+        self.plotVaccinated = self.graphWidget.plot(self.dataX, self.dataVaccinated,
+                                                    pen=pg.mkPen(color=(0, 0, 255), width=3),
+                                                    name='Geimpft')
+
 
     def connectSignals(self):
         """this function is used to connect all of the event handlers for the gui with functions in the view"""
@@ -153,7 +163,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                                         self.spinBox_infectionRate.value(), self.spinBox_infectionRadius.value(),
                                         self.spinBox_initiallyInfected.value(), self.spinBox_deathRate.value(),
                                         self.spinBox_minInfectionDuration.value(),
-                                        self.spinBox_maxInfectionDuration.value(), self.spinBox_quarantinePercentage.value())
+                                        self.spinBox_maxInfectionDuration.value(), self.spinBox_quarantinePercentage.value(), self.checkBox_activateVaccination.isChecked(), self.spinBox_dateForVaccine.value(), self.spinBox_vaccineSpeed.value(), self.checkBox_healthyFirstVaccinated.isChecked())
 
     def pauseSimulationClicked(self):
         """emits pauseResumeSimulationSignal"""
@@ -200,7 +210,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         a FileDialog for the user to enter a path to save the csv file"""
         name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
         print(name[0])
-        csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataImmune, self.dataInfected, self.dataDead]).T
+        csvMatrix = np.array([self.dataX, self.dataHealthy, self.dataImmune, self.dataInfected, self.dataDead, self.dataVaccinated]).T
         np.savetxt(name[0], csvMatrix[0::granularity], delimiter=",", fmt='%i', header=constants.CSV_HEADER)
 
     def multipleSimDialog(self):
@@ -210,7 +220,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def runMultipleSimulations(self, simCount, simDuration, particlesCount, infectedParticlesCount, infectionRate,
                                infectionRadius, deathRate, minInfectionDuration, maxInfectionDuration, percentageImmune,
-                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, dialog):
+                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, vaccinationActivated, vaccinationDate, vaccinationSpeed, vaccinateHealthyFirst, dialog):
         print("simCount:", simCount)
         print("simDuration:", simDuration)
         print("particlesCount:", particlesCount)
@@ -228,7 +238,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.multipleSimulationSignal.emit(simCount, simDuration, particlesCount, infectedParticlesCount, infectionRate,
                                infectionRadius, deathRate, minInfectionDuration, maxInfectionDuration, percentageImmune,
-                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, dialog)
+                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, vaccinationActivated, vaccinationDate, vaccinationSpeed, vaccinateHealthyFirst, dialog)
 
 
 
@@ -257,11 +267,19 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dataInfected = []
         self.dataX = []
         self.dataImmune = []
+        self.dataVaccinated = []
+        self.graphWidget.addLegend()
         self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected,
-                                                  pen=pg.mkPen(color=(255, 0, 0), width=3))
-        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3))
-        self.plotImmune = self.graphWidget.plot(self.dataX, self.dataImmune, pen=pg.mkPen(color=(255, 255, 0), width=3))
+                                                  pen=pg.mkPen(color=(255, 0, 0), width=3), name='Infiziert')
+        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3),
+                                                 name='Gesund')
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3),
+                                              name='Gestorben')
+        self.plotImmune = self.graphWidget.plot(self.dataX, self.dataImmune, pen=pg.mkPen(color=(255, 255, 0), width=3),
+                                                name='Immun')
+        self.plotVaccinated = self.graphWidget.plot(self.dataX, self.dataVaccinated,
+                                                    pen=pg.mkPen(color=(0, 0, 255), width=3),
+                                                    name='Geimpft')
 
     def resumeSimulation(self):
         """this function changes the text of pauseSimButton to Pause"""
@@ -276,10 +294,17 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dataInfected = []
         self.dataX = []
         self.dataImmune = []
-        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected, pen=pg.mkPen(color=(255, 0, 0), width=3))
-        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3))
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3))
-        self.plotImmune = self.graphWidget.plot(self.dataX, self.dataImmune, pen=pg.mkPen(color=(255, 255, 0), width=3))
+        self.graphWidget.addLegend()
+        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected,
+                                                  pen=pg.mkPen(color=(255, 0, 0), width=3), name='Infiziert')
+        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3),
+                                                 name='Gesund')
+        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3),
+                                              name='Gestorben')
+        self.plotImmune = self.graphWidget.plot(self.dataX, self.dataImmune, pen=pg.mkPen(color=(255, 255, 0), width=3),
+                                                name='Immun')
+        self.plotVaccinated = self.graphWidget.plot(self.dataX, self.dataVaccinated, pen=pg.mkPen(color=(0, 0, 255), width=3),
+                                                name='Geimpft')
 
     # function visualizes the data from the simulation model in a graphicsview. It uses a new scene for every step.
     def updateParticles(self, particleList, data):
@@ -301,10 +326,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             elif(particleList[i].state == constants.IMMUNE):
                 pen = QPen(Qt.darkYellow)
                 brush = QBrush(Qt.yellow)
+            elif(particleList[i].state == constants.VACCINATED):
+                pen = QPen(Qt.darkCyan)
+                brush = QBrush(Qt.cyan)
             else:   # == strings.DEAD
                 pen = QPen(Qt.gray)
                 brush = QBrush(Qt.white)
-            scene.addEllipse(QRectF(particleList[i].x, particleList[i].y, ELLIPSIS_DIMENSION, ELLIPSIS_DIMENSION), pen, brush)
+            scene.addEllipse(QRectF(particleList[i].x - ELLIPSIS_DIMENSION/2, particleList[i].y - ELLIPSIS_DIMENSION/2, ELLIPSIS_DIMENSION, ELLIPSIS_DIMENSION), pen, brush)
+            scene.addEllipse(QRectF(particleList[i].x - ELLIPSIS_DIMENSION/2 - 4, particleList[i].y - ELLIPSIS_DIMENSION/2 - 4, 11, 11), pen)
         self.graphicsView.setScene(scene)
         self.graphicsView.ensureVisible(scene.sceneRect())
         self.graphicsView.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)
@@ -312,12 +341,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.i += 1
         # retrieving data from the model for the graph
         if(self.i % 60 == 0):
-            self.dataX = data[:,0]
+            self.dataX = data[:, 0]
             self.dataHealthy = data[:, 1]
             self.dataInfected = data[:, 3]
             self.dataDead = data[:, 4]
             self.dataImmune = data[:, 2]
+            self.dataVaccinated = data[:, 5]
             self.plotInfected.setData(self.dataX, self.dataInfected)
             self.plotHealthy.setData(self.dataX, self.dataHealthy)
             self.plotDead.setData(self.dataX, self.dataDead)
             self.plotImmune.setData(self.dataX, self.dataImmune)
+            self.plotVaccinated.setData(self.dataX, self.dataVaccinated)
