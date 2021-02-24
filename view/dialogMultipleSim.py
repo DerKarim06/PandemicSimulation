@@ -53,8 +53,36 @@ class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
     def connectSignals(self):
         self.pushButton.clicked.connect(self.okClicked)
 
+    def showAlert(self, message):
+        """this function shows an alert to the user
+        Args:
+            message: the message that should be show to the user
+        """
+        dlg = QtWidgets.QDialog(self)
+        dlg.setWindowTitle(constants.ERROR)
+        label = QtWidgets.QLabel(dlg)
+        label.setText(message)
+        label.adjustSize()
+        label.move(100, 60)
+        dlg.exec_()
+
     def okClicked(self):
-        print("clicked")
+        if self.spinBox_countInfectedParticles.value() > self.spinBox_countParticles.value():
+            self.showAlert(constants.PARTICLES_ALERT)
+            return
+        if self.spinBox_minInfectionDays.value() > self.spinBox_maxInfectionDays.value():
+            self.showAlert(constants.INFECTION_MIN_OVER_MAX_ALERT)
+            return
+        if self.spinBox_maxInfectionDays.value() < self.spinBox_minInfectionDays.value():
+            self.showAlert(constants.INFECTION_MAX_UNDER_MIN_ALERT)
+            return
+        if self.spinBox_minImmuneDays.value() > self.spinBox_maxImmuneDays.value():
+            self.showAlert(constants.IMMUNE_MIN_OVER_MAX_ALERT)
+            return
+        if self.spinBox_maxImmuneDays.value() < self.spinBox_minImmuneDays.value():
+            self.showAlert(constants.IMMUNE_MAX_UNDER_MIN_ALERT)
+            return
+
 
         self.counter = 0
 

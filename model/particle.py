@@ -1,3 +1,4 @@
+import math
 import random
 import resources.constants as constants
 
@@ -10,9 +11,11 @@ class Particle:
 
     test = 0
 
-    def __init__(self, x, y, simulation, radius=3):
+    def __init__(self, x, y, simulation, dim=3):
         self.simulation = simulation
         self.x = x
+        self.oldX = x
+        self.oldY = y
         self.y = y
         # initially calculate a Delta x and y for movement angle
         self.currentDeltaX = random.randint(-MOVEMENT_RADIUS, MOVEMENT_RADIUS)
@@ -22,7 +25,7 @@ class Particle:
         self.stepX = self.currentDeltaX
         self.stepY = self.currentDeltaY
         self.state = constants.HEALTHY
-        self.radius = radius
+        self.dim = dim
         self.infectionCounter = 0   # this is for checking how many days a particle was sick later
         self.immuneCounter = 0  # this is to check how long a particle is immune
         self.is_colliding = False
@@ -62,6 +65,8 @@ class Particle:
         if(self.stepX == 0 and self.stepY == 0):
             self.stepX = self.currentDeltaX
             self.stepY = self.currentDeltaY
+        self.oldX = self.x
+        self.oldY = self.y
         if(self.stepX != 0):
             if(self.stepX > 0):
                 self.move_right()
@@ -135,10 +140,11 @@ class Particle:
         if not self.isQuarantining:
             for j in range(0, len(particle_list)):
                 if not particle_list[j].isQuarantining:
-                    if abs(self.x - particle_list[j].x) <= self.radius and abs(self.y - particle_list[j].y) <= self.radius and self != particle_list[j] and self.state != constants.DEAD and particle_list[j].state != constants.DEAD:
+                    #if abs(self.x - particle_list[j].x) <= self.radius and abs(self.y - particle_list[j].y) <= self.radius and self != particle_list[j] and self.state != constants.DEAD and particle_list[j].state != constants.DEAD:
+                    if math.sqrt((self.x - particle_list[j].x)**2 + (self.y - particle_list[j].y)**2) <= self.dim and self != particle_list[j] and self.state != constants.DEAD and particle_list[j].state != constants.DEAD:
                         self.is_colliding = True
                         particle_list[j].is_colliding = True
-                    if abs(self.x - particle_list[j].x) <= infectionRadius and abs(self.y - particle_list[j].y) <= infectionRadius and self != particle_list[j] and ((self.state == constants.HEALTHY and particle_list[j].state == constants.INFECTED) or (self.state == constants.INFECTED and particle_list[j].state == constants.HEALTHY)):  # and particleList[j].state == "infected"
+                    if math.sqrt((self.x - particle_list[j].x)**2 + (self.y - particle_list[j].y)**2) <= infectionRadius and self != particle_list[j] and ((self.state == constants.HEALTHY and particle_list[j].state == constants.INFECTED) or (self.state == constants.INFECTED and particle_list[j].state == constants.HEALTHY)):  # and particleList[j].state == "infected"
                         rndm = random.randint(1, 100)
                         if (rndm <= infection_rate):
                             if self.state == constants.HEALTHY:
@@ -153,7 +159,7 @@ class Particle:
 
         Args:
             radius: the radius that should be set"""
-        self.radius = radius
+        self.dim = 3 + radius
 
     def vaccinate(self):
         self.state = constants.VACCINATED

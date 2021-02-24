@@ -2,6 +2,7 @@ INFECTION_MAX_UNDER_MIN_ALERT = "Die maximale Infektionsdauer kann nicht unter d
 INFECTION_MIN_OVER_MAX_ALERT = "Die minimale Infektionsdauer kann nicht über der maximalen Infektionsdauer liegen!"
 IMMUNE_MIN_OVER_MAX_ALERT = "Die minimale Dauer der Immunität kann nicht über der maximalen Dauer liegen!"
 IMMUNE_MAX_UNDER_MIN_ALERT = "Die maximale Dauer der Immunität kann nicht unter der minimalen Dauer liegen!"
+PARTICLES_ALERT = "Es können nicht mehr Partikel infiziert sein als es überhaupt gibt!"
 HEALTHY = "healthy"
 INFECTED = "infected"
 DEAD = "dead"

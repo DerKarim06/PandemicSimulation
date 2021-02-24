@@ -612,6 +612,7 @@ class Ui_MainWindow(object):
         self.label_minImmuneDuration.setText(_translate("MainWindow", "minimale Dauer der Immunität (in Tagen):"))
         self.label_maxImmuneDuration.setText(_translate("MainWindow", "maximale Dauer der Immunität (in Tagen):"))
         self.groupBox_4.setTitle(_translate("MainWindow", "Impfbezogene Einstellungen"))
+        self.checkBox_activateVaccination.setToolTip(_translate("MainWindow", "<html><head/><body><p>Aktiviere den Einsatz eines Impfstoffes (Es wird davon ausgegangen, dass geimpfte permanent immun sind)</p></body></html>"))
         self.checkBox_activateVaccination.setText(_translate("MainWindow", "Impfstoff aktivieren"))
         self.label_dateForVaccine.setText(_translate("MainWindow", "Ab diesem Zeitpunkt steht\n"
 "ein Impfstoff zu Verfügung:"))
@@ -629,7 +630,7 @@ class Ui_MainWindow(object):
         self.menuDEBUG.setTitle(_translate("MainWindow", "DEBUG"))
         self.actionExport_CSV.setText(_translate("MainWindow", "CSV exportieren"))
         self.actionMehrere_Simulationen_ausf_hren.setText(_translate("MainWindow", "Mehrere Simulationen ausführen"))
-        self.actionShow_InfectionRadius.setText(_translate("MainWindow", "Zeige Infektionsradius"))
-        self.actionShow_DistanceRadius.setText(_translate("MainWindow", "Zeige Abstandsradius"))
+        self.actionShow_InfectionRadius.setText(_translate("MainWindow", "Zeige Infektionsradius (Rot)"))
+        self.actionShow_DistanceRadius.setText(_translate("MainWindow", "Zeige Abstandsradius (Magenta)"))
 
 from pyqtgraph import PlotWidget

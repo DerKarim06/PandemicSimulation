@@ -13,7 +13,7 @@ from view.dialogMultipleSim import DialogMultipleSim
 
 import resources.constants as constants
 
-ELLIPSIS_DIMENSION = 3
+ELLIPSIS_DIMENSION = 4
 SCENE_DIMENSION = 200
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -21,7 +21,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, bool, int, int, bool)
     pauseResumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
-    speedSimulationSignal = QtCore.pyqtSignal(int)
+    speedSimulationSignal = QtCore.pyqtSignal(float)
     infectionRateSignal = QtCore.pyqtSignal(int)
     deathRateSignal = QtCore.pyqtSignal(int)
     infectionRadiusChangedSignal = QtCore.pyqtSignal(int)
@@ -44,10 +44,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.connectSignals()
 
         # set initial configurations for the speed slider
-        self.horizontalSlider.setMinimum(1)
-        self.horizontalSlider.setMaximum(10)
-        self.horizontalSlider.setValue(1)
-        self.horizontalSlider.setTickInterval(1)
+        self.horizontalSlider.setMinimum(2)
+        self.horizontalSlider.setMaximum(30)
+        self.horizontalSlider.setValue(10)
+        self.horizontalSlider.setTickInterval(2)
         self.horizontalSlider.setTickPosition(QSlider.TicksBelow)
 
         # set initial configurations for the spinBoxes
@@ -176,8 +176,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def speedSimulationChanged(self):
         """emits speedSimulationSignal with value of horizontalSlider
         Additionaly sets label_speedFactor text to a new factor of speed"""
-        self.speedSimulationSignal.emit(self.horizontalSlider.value())
-        self.label_speedFactor.setText("x" + str(self.horizontalSlider.value()))
+        self.speedSimulationSignal.emit(self.horizontalSlider.value() / 10)
+        self.label_speedFactor.setText("x" + str(self.horizontalSlider.value() / 10))
 
     def infectionRateBoxChanged(self):
         """emits infectionRateSignal with value of spinBox_infectionRate"""
@@ -329,11 +329,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             elif(particleList[i].state == constants.VACCINATED):
                 pen = QPen(Qt.darkCyan)
                 brush = QBrush(Qt.cyan)
-            else:   # == strings.DEAD
+            else:   # == constants.DEAD
                 pen = QPen(Qt.gray)
                 brush = QBrush(Qt.white)
             scene.addEllipse(QRectF(particleList[i].x - ELLIPSIS_DIMENSION/2, particleList[i].y - ELLIPSIS_DIMENSION/2, ELLIPSIS_DIMENSION, ELLIPSIS_DIMENSION), pen, brush)
-            scene.addEllipse(QRectF(particleList[i].x - ELLIPSIS_DIMENSION/2 - 4, particleList[i].y - ELLIPSIS_DIMENSION/2 - 4, 11, 11), pen)
+            if self.actionShow_InfectionRadius.isChecked() and particleList[i].state == constants.INFECTED:
+                scene.addEllipse(QRectF(particleList[i].x - ELLIPSIS_DIMENSION/2 - self.spinBox_infectionRadius.value(), particleList[i].y - ELLIPSIS_DIMENSION/2 - self.spinBox_infectionRadius.value(), self.spinBox_infectionRadius.value() * 2 + ELLIPSIS_DIMENSION, self.spinBox_infectionRadius.value() * 2 + ELLIPSIS_DIMENSION), pen)
+            if self.actionShow_DistanceRadius.isChecked():
+                scene.addEllipse(QRectF(particleList[i].x - ELLIPSIS_DIMENSION/2 - self.spinBox_distanceRadius.value(), particleList[i].y - ELLIPSIS_DIMENSION/2 - self.spinBox_distanceRadius.value(), self.spinBox_distanceRadius.value() * 2 + ELLIPSIS_DIMENSION, self.spinBox_distanceRadius.value() * 2 + ELLIPSIS_DIMENSION), QPen(Qt.magenta))
         self.graphicsView.setScene(scene)
         self.graphicsView.ensureVisible(scene.sceneRect())
         self.graphicsView.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)

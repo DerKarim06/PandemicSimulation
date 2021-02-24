@@ -22,7 +22,7 @@ class Presenter(QtCore.QObject):
         # create timer that will call the mainLoop every 1000/FPS milliseconds
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.mainLoop)
-        self.timer.start(int(1000 / FPS))
+        self.timer.start((1000 / FPS))
         self.framecounter = 0
 
         self._connectUIElements()
@@ -53,7 +53,7 @@ class Presenter(QtCore.QObject):
         """
         print("debug:", vaccinationSpeed)
         if countParticles < initiallyInfected:
-            self.ui.showAlert("Es können nicht mehr Partikel infiziert sein als es überhaupt gibt.")
+            self.ui.showAlert(constants.PARTICLES_ALERT)
         else:
             if self.isSimulationPaused:
                 self.resetSimulation()
@@ -89,7 +89,7 @@ class Presenter(QtCore.QObject):
         Args:
             value: the new value by which factor to normal (1) the simulation has to be speed up
         """
-        self.timer.setInterval(int((1/value * 1000) / FPS))
+        self.timer.setInterval((1/value * 1000) / FPS)
 
     def changeInfectionRate(self, infectionRate):
         """this function changes the infection rate of the current simulation
