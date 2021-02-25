@@ -5,11 +5,14 @@ from model.particle import Particle
 
 import resources.constants as constants
 
-FRAMES_FOR_ONE_DAY = 60
 
 class Simulation:
     """This class represents the whole simulation holding all of the particles"""
-    def __init__(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles=100, infectionRate=12, infectionRadius=5, initiallyInfected=1, deathRate=8, minDaysInfected=10, maxDaysInfected=20, quarantinePercentage=25, vaccinationActivated=False, vaccinationBegin=0, vaccinationSpeed=0, vaccinateHealthyFirst=False):
+
+    def __init__(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles=100,
+                 infectionRate=12, infectionRadius=5, initiallyInfected=1, deathRate=8, minDaysInfected=10,
+                 maxDaysInfected=20, quarantinePercentage=25, vaccinationActivated=False, vaccinationBegin=0,
+                 vaccinationSpeed=0, vaccinateHealthyFirst=False, distanceRadius=0):
         """this is the constructor of the simulation class. The simulation additionally holds lists in which the
         simulations data is stored for future exports
 
@@ -21,14 +24,20 @@ class Simulation:
             maxImmuneDuration: the maximum duration of being immune
             countParticles: the number of particles the simulation should hold (default: 100)
             infectionRate: the initially set infection rate which with particles can infect each other (default: 12)
-            infectionRadius: the initially set infection radius, which is used to detect collisions of the particles (default: 5)
-            initiallyInfected: the initial number of particles that are infected by the start of the simulation (default: 1)
+            infectionRadius: the initially set infection radius, which is used to detect collisions of the particles
+                (default: 5)
+            initiallyInfected: the initial number of particles that are infected by the start of the simulation
+                (default: 1)
             deathRate: the initially set death rate within the simulation (default: 8)
             minDaysInfected: the minimum of days particles have to be infected (default: 10)
             maxDaysInfected the maximum of day particles can be infected up to (default: 20)
             quarantinePercentage: the percentage of particles being in quarantine when infected (default: 25)
+            vaccinationActivated: whether vaccination is activated in the current simulation (default: False)
+            vaccinationBegin: the start of vaccination in days (default: 0)
+            vaccinationSpeed: the count of particles being able to be vaccinated in one day (default: 0)
+            vaccinateHealthyFirst: whether the first one getting vaccinated are the healthy ones (default: False)
+            distanceRadius: the radius a particle holds to be in distance to others (default: 0)
         """
-
         self.xBorder = xBorder
         self.yBorder = yBorder
         self.infectionRadius = infectionRadius
@@ -41,9 +50,9 @@ class Simulation:
         for i in range(0, countParticles):
             rndmX = random.randint(0, xBorder)
             rndmY = random.randint(0, yBorder)
-            self.particleList.append(Particle(rndmX, rndmY, self))
+            self.particleList.append(Particle(rndmX, rndmY, self, distanceRadius))
         for i in range(initiallyInfected):
-            self.particleList[i].state = constants.INFECTED # initially set particles state as "infected"
+            self.particleList[i].state = constants.INFECTED  # initially set particles state as "infected"
 
         self.dataX = [0]
         self.dataInfected = [initiallyInfected]
@@ -60,9 +69,8 @@ class Simulation:
         self.minImmuneDuration = minImmuneDuration
 
         self.vaccinationActivated = vaccinationActivated
-        self.vaccinationBegin = vaccinationBegin * FRAMES_FOR_ONE_DAY
+        self.vaccinationBegin = vaccinationBegin * constants.FRAMES_FOR_ONE_DAY
         self.vaccinationSpeed = vaccinationSpeed
-        print(vaccinationSpeed)
         self.vaccinateHealthyFirst = vaccinateHealthyFirst
 
         self.quarantinePercentage = quarantinePercentage
@@ -74,7 +82,7 @@ class Simulation:
         It increments the step counter on every call, detects collisions among the particles, moves them
         and eventually tracks the current state of the simulation for latter export needs
         """
-        self.stepCounter += 1 # variable to know how many frames were already created
+        self.stepCounter += 1  # variable to know how many frames were already created
         # move every particle in particleList
         j = 0
         k = 0
@@ -85,13 +93,13 @@ class Simulation:
         for i in range(0, len(self.particleList)):
             self.particleList[i].detect_collisions(self.particleList[i:], self.infectionRate, self.infectionRadius)
         for i in range(0, len(self.particleList)):
-            if(self.particleList[i].state != constants.DEAD):
+            if (self.particleList[i].state != constants.DEAD):
                 self.particleList[i].move()
             if self.particleList[i].state == constants.INFECTED:
                 self.particleList[i].incrementInfectionCounter()
             if self.particleList[i].state == constants.IMMUNE:
                 self.particleList[i].incrementImmuneCounter()
-            if (self.stepCounter % FRAMES_FOR_ONE_DAY == 0): #Find variables for the statistic/csv
+            if (self.stepCounter % constants.FRAMES_FOR_ONE_DAY == 0):  # Find variables for the statistic/csv
                 if (self.particleList[i].state == constants.DEAD):
                     l += 1
                 if (self.particleList[i].state == constants.INFECTED):
@@ -102,16 +110,17 @@ class Simulation:
                     k += 1
                 if (self.particleList[i].state == constants.VACCINATED):
                     n += 1
-        if (self.stepCounter % FRAMES_FOR_ONE_DAY == 0): #add the variables to the lists
-            self.dataX.append(int(self.stepCounter / FRAMES_FOR_ONE_DAY))
+        if (self.stepCounter % constants.FRAMES_FOR_ONE_DAY == 0):  # add the variables to the lists
+            self.dataX.append(int(self.stepCounter / constants.FRAMES_FOR_ONE_DAY))
             self.dataInfected.append(j)
             self.dataHealthy.append(k)
             self.dataImmune.append(m)
             self.dataDead.append(l)
             self.dataVaccinated.append(n)
-        print("test")
 
     def performVaccinations(self):
+        """function to perform the vaccination progress. It vaccinates as many particles as declared in
+        self.vaccinationSpeed"""
         if self.stepCounter >= self.vaccinationBegin and self.stepCounter % 60 == 0:
             vaccinationCounter = 0
             if self.vaccinateHealthyFirst:
@@ -129,7 +138,8 @@ class Simulation:
             else:
                 for i in range(0, len(self.particleList)):
                     if vaccinationCounter >= self.vaccinationSpeed: break
-                    if self.particleList[i].state == constants.HEALTHY or self.particleList[i].state == constants.IMMUNE:
+                    if self.particleList[i].state == constants.HEALTHY or \
+                            self.particleList[i].state == constants.IMMUNE:
                         self.particleList[i].vaccinate()
                         vaccinationCounter += 1
 
@@ -220,7 +230,8 @@ class Simulation:
         Returns:
             a numpy array holding the count of healthy, infected and dead particles to each step count
         """
-        return np.array([self.dataX, self.dataHealthy, self.dataImmune, self.dataInfected, self.dataDead, self.dataVaccinated]).T
+        return np.array(
+            [self.dataX, self.dataHealthy, self.dataImmune, self.dataInfected, self.dataDead, self.dataVaccinated]).T
 
     def getParticles(self):
         """this function returns the particle list

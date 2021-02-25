@@ -1,30 +1,30 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import Qt, QRectF
-from PyQt5.QtGui import QPen, QBrush
-from PyQt5.QtWidgets import QSlider
-import numpy as np
+from PyQt5 import QtWidgets, QtCore
 import random
 
-from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 
 from view.dialogwindowMultipleSim import Ui_Dialog
 import resources.constants as constants
 
+# define some random colors for the different graphs
 COLORS = [(255, 0, 0), (255, 255, 0), (255, 0, 255), (0, 255, 0), (0, 255, 255), (0, 0, 255), (142, 80, 33),
           (15, 178, 56), (45, 76, 41), (98, 213, 145), (145, 100, 246), (27, 164, 60)]
 
-class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
 
-    finishedSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, int, bool, int, int, bool, Ui_Dialog)
+class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
+    finishedSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, int, bool, int,
+                                       int, bool, Ui_Dialog)
 
     def __init__(self):
+        """creates the GUI of the multiple simulations view. It also initializes all of the widgets to their initial
+        values"""
         super(DialogMultipleSim, self).__init__()
         self.setupUi(self)
         self.connectSignals()
 
         self.counter = 0
 
+        # initializing data
         self.dataX = []
         self.dataInfected = []
         self.dataHealthy = []
@@ -36,6 +36,7 @@ class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
 
         self.colors = []
 
+        # initializing widgets
         self.spinBox_countSim.setValue(4)
         self.spinBox_simDuration.setValue(25)
         self.spinBox_countParticles.setValue(99)
@@ -50,8 +51,30 @@ class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
         self.spinBox_maxImmuneDays.setValue(15)
         self.spinBox_quarantinePercentage.setValue(20)
 
+        self.graphWidget_Healthy.clear()
+        self.graphWidget_Healthy.setLabel('left', constants.COUNT_OF_PARTICLES)
+        self.graphWidget_Healthy.setLabel('bottom', constants.TIME_IN_SECONDS)
+        self.graphWidget_Healthy.setTitle(constants.HEALTHY_TITLE, color="w", size="25pt")
+        self.graphWidget_Infected.clear()
+        self.graphWidget_Infected.setLabel('left', constants.COUNT_OF_PARTICLES)
+        self.graphWidget_Infected.setLabel('bottom', constants.TIME_IN_SECONDS)
+        self.graphWidget_Infected.setTitle(constants.INFECTED_TITLE, color="w", size="25pt")
+        self.graphWidget_Immune.clear()
+        self.graphWidget_Immune.setLabel('left', constants.COUNT_OF_PARTICLES)
+        self.graphWidget_Immune.setLabel('bottom', constants.TIME_IN_SECONDS)
+        self.graphWidget_Immune.setTitle(constants.IMMUNE_TITLE, color="w", size="25pt")
+        self.graphWidget_Vaccinated.clear()
+        self.graphWidget_Vaccinated.setLabel('left', constants.COUNT_OF_PARTICLES)
+        self.graphWidget_Vaccinated.setLabel('bottom', constants.TIME_IN_SECONDS)
+        self.graphWidget_Vaccinated.setTitle(constants.VACCINATED_TITLE, color="w", size="25pt")
+        self.graphWidget_Dead.clear()
+        self.graphWidget_Dead.setLabel('left', constants.COUNT_OF_PARTICLES)
+        self.graphWidget_Dead.setLabel('bottom', constants.TIME_IN_SECONDS)
+        self.graphWidget_Dead.setTitle(constants.DEAD_TITLE, color="w", size="25pt")
+
     def connectSignals(self):
-        self.pushButton.clicked.connect(self.okClicked)
+        """function to connect all of the signals"""
+        self.pushButton.clicked.connect(self.pushButtonClicked)
 
     def showAlert(self, message):
         """this function shows an alert to the user
@@ -66,7 +89,9 @@ class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
         label.move(100, 60)
         dlg.exec_()
 
-    def okClicked(self):
+    def pushButtonClicked(self):
+        """function that handles the click event of the pushButton. It checks whether all given arguments are right and
+        initiates the process for multiple simulations"""
         if self.spinBox_countInfectedParticles.value() > self.spinBox_countParticles.value():
             self.showAlert(constants.PARTICLES_ALERT)
             return
@@ -83,7 +108,6 @@ class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
             self.showAlert(constants.IMMUNE_MAX_UNDER_MIN_ALERT)
             return
 
-
         self.counter = 0
 
         self.dataX = []
@@ -97,57 +121,63 @@ class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
 
         self.colors = []
 
-        # set initial configuration for the graphWidget
-        # self.graphWidget.setBackground('w')
         self.graphWidget_Healthy.clear()
         self.graphWidget_Healthy.setLabel('left', constants.COUNT_OF_PARTICLES)
         self.graphWidget_Healthy.setLabel('bottom', constants.TIME_IN_SECONDS)
-        self.graphWidget_Healthy.setTitle("Gesunde Partikel", color="w", size="25pt")
+        self.graphWidget_Healthy.setTitle(constants.HEALTHY_TITLE, color="w", size="25pt")
         self.graphWidget_Infected.clear()
         self.graphWidget_Infected.setLabel('left', constants.COUNT_OF_PARTICLES)
         self.graphWidget_Infected.setLabel('bottom', constants.TIME_IN_SECONDS)
-        self.graphWidget_Infected.setTitle("Infizierte Partikel", color="w", size="25pt")
+        self.graphWidget_Infected.setTitle(constants.INFECTED_TITLE, color="w", size="25pt")
         self.graphWidget_Immune.clear()
         self.graphWidget_Immune.setLabel('left', constants.COUNT_OF_PARTICLES)
         self.graphWidget_Immune.setLabel('bottom', constants.TIME_IN_SECONDS)
-        self.graphWidget_Immune.setTitle("Immune Partikel", color="w", size="25pt")
+        self.graphWidget_Immune.setTitle(constants.IMMUNE_TITLE, color="w", size="25pt")
         self.graphWidget_Vaccinated.clear()
         self.graphWidget_Vaccinated.setLabel('left', constants.COUNT_OF_PARTICLES)
         self.graphWidget_Vaccinated.setLabel('bottom', constants.TIME_IN_SECONDS)
-        self.graphWidget_Vaccinated.setTitle("Geimpfte Partikel", color="w", size="25pt")
+        self.graphWidget_Vaccinated.setTitle(constants.VACCINATED_TITLE, color="w", size="25pt")
         self.graphWidget_Dead.clear()
         self.graphWidget_Dead.setLabel('left', constants.COUNT_OF_PARTICLES)
         self.graphWidget_Dead.setLabel('bottom', constants.TIME_IN_SECONDS)
-        self.graphWidget_Dead.setTitle("Tote Partikel", color="w", size="25pt")
+        self.graphWidget_Dead.setTitle(constants.DEAD_TITLE, color="w", size="25pt")
 
         for i in range(0, self.spinBox_countSim.value()):
-
             self.dataInfected.append([])
             self.dataHealthy.append([])
             self.dataDead.append([])
             self.dataImmune.append([])
             self.dataVaccinated.append([])
-            self.colors.append(random.randint(0, len(COLORS)-1))
+            self.colors.append(random.randint(0, len(COLORS) - 1))
             self.plots[0].append(self.graphWidget_Healthy.plot(self.dataX, self.dataHealthy[i],
-                                                      pen=pg.mkPen(color=self.colors[i], width=3)))
+                                                               pen=pg.mkPen(color=self.colors[i], width=3)))
             self.plots[1].append(self.graphWidget_Infected.plot(self.dataX, self.dataInfected[i],
-                                                         pen=pg.mkPen(color=self.colors[i], width=3)))
+                                                                pen=pg.mkPen(color=self.colors[i], width=3)))
             self.plots[2].append(self.graphWidget_Immune.plot(self.dataX, self.dataImmune[i],
-                                                         pen=pg.mkPen(color=self.colors[i], width=3)))
+                                                              pen=pg.mkPen(color=self.colors[i], width=3)))
             self.plots[3].append(self.graphWidget_Dead.plot(self.dataX, self.dataDead[i],
-                                                         pen=pg.mkPen(color=self.colors[i], width=3)))
-            self.plots[4].append(self.graphWidget_Vaccinated.plot(self.dataX, self.dataVaccinated[i],
                                                             pen=pg.mkPen(color=self.colors[i], width=3)))
+            self.plots[4].append(self.graphWidget_Vaccinated.plot(self.dataX, self.dataVaccinated[i],
+                                                                  pen=pg.mkPen(color=self.colors[i], width=3)))
 
-
-        self.finishedSignal.emit(self.spinBox_countSim.value(), self.spinBox_simDuration.value(), self.spinBox_countParticles.value(),
-                                 self.spinBox_countInfectedParticles.value(), self.spinBox_infectionRate.value(), self.spinBox_infectionRadius.value(),
-                                 self.spinBox_deathRate.value(), self.spinBox_minInfectionDays.value(), self.spinBox_maxInfectionDays.value(),
-                                 self.spinBox_ImmunePercentage.value(), self.spinBox_minImmuneDays.value(), self.spinBox_maxImmuneDays.value(),
-                                 self.spinBox_distanceRadius.value(), self.spinBox_quarantinePercentage.value(), self.checkBox_activateVaccination.isChecked(), self.spinBox_dateForVaccine.value(), self.spinBox_vaccineSpeed.value(), self.checkBox_healthyFirstVaccinated.isChecked(), self)
-
+        self.finishedSignal.emit(self.spinBox_countSim.value(), self.spinBox_simDuration.value(),
+                                 self.spinBox_countParticles.value(),
+                                 self.spinBox_countInfectedParticles.value(), self.spinBox_infectionRate.value(),
+                                 self.spinBox_infectionRadius.value(),
+                                 self.spinBox_deathRate.value(), self.spinBox_minInfectionDays.value(),
+                                 self.spinBox_maxInfectionDays.value(),
+                                 self.spinBox_ImmunePercentage.value(), self.spinBox_minImmuneDays.value(),
+                                 self.spinBox_maxImmuneDays.value(),
+                                 self.spinBox_distanceRadius.value(), self.spinBox_quarantinePercentage.value(),
+                                 self.checkBox_activateVaccination.isChecked(), self.spinBox_dateForVaccine.value(),
+                                 self.spinBox_vaccineSpeed.value(), self.checkBox_healthyFirstVaccinated.isChecked(),
+                                 self)
 
     def updateData(self, data):
+        """this function updates the data with every step the simulations are running
+        Args:
+            data: the data retrieved from the simulations
+        """
         self.counter += 1
         print(data[0][:, 1])
         print(self.counter)

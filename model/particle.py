@@ -2,42 +2,35 @@ import math
 import random
 import resources.constants as constants
 
-# constants
-MOVEMENT_RADIUS = 5
-FRAMES_FOR_ONE_DAY = 60
-
 class Particle:
     """this class represents one particle in the simulation. Every particle is initialised with the state HEALTHY"""
 
-    test = 0
-
-    def __init__(self, x, y, simulation, dim=3):
+    def __init__(self, x, y, simulation, distanceRadius=0):
         self.simulation = simulation
         self.x = x
-        self.oldX = x
-        self.oldY = y
         self.y = y
         # initially calculate a Delta x and y for movement angle
-        self.currentDeltaX = random.randint(-MOVEMENT_RADIUS, MOVEMENT_RADIUS)
-        self.currentDeltaY = random.randint(-MOVEMENT_RADIUS, MOVEMENT_RADIUS)
-        while(self.currentDeltaX == 0 and self.currentDeltaY == 0): # check whether the particle initially wants to stay at the same place
-            self.currentDeltaY = random.randint(-MOVEMENT_RADIUS, MOVEMENT_RADIUS)
+        self.currentDeltaX = random.randint(-constants.MOVEMENT_RADIUS, constants.MOVEMENT_RADIUS)
+        self.currentDeltaY = random.randint(-constants.MOVEMENT_RADIUS, constants.MOVEMENT_RADIUS)
+        while (
+                self.currentDeltaX == 0 and self.currentDeltaY == 0):  # check whether the particle initially wants to stay at the same place
+            self.currentDeltaY = random.randint(-constants.MOVEMENT_RADIUS, constants.MOVEMENT_RADIUS)
         self.stepX = self.currentDeltaX
         self.stepY = self.currentDeltaY
         self.state = constants.HEALTHY
-        self.dim = dim
-        self.infectionCounter = 0   # this is for checking how many days a particle was sick later
+        self.dim = constants.PARTICLE_DIMENSION + distanceRadius
+        self.infectionCounter = 0  # this is for checking how many days a particle was sick later
         self.immuneCounter = 0  # this is to check how long a particle is immune
         self.is_colliding = False
         self.isQuarantining = False
 
     def calculate_delta_xy(self):
         """this function calculates a new delta x and y for the movement angle of the given particle"""
-        self.currentDeltaX = random.randint(-MOVEMENT_RADIUS, MOVEMENT_RADIUS)
+        self.currentDeltaX = random.randint(-constants.MOVEMENT_RADIUS, constants.MOVEMENT_RADIUS)
         self.stepX = self.currentDeltaX
-        test = random.randint(-MOVEMENT_RADIUS, MOVEMENT_RADIUS)
+        test = random.randint(-constants.MOVEMENT_RADIUS, constants.MOVEMENT_RADIUS)
         while (test == self.currentDeltaX):
-            test = random.randint(-MOVEMENT_RADIUS, MOVEMENT_RADIUS)
+            test = random.randint(-constants.MOVEMENT_RADIUS, constants.MOVEMENT_RADIUS)
         self.currentDeltaY = test
         self.stepY = self.currentDeltaY
         if self.x == 0:
@@ -62,18 +55,18 @@ class Particle:
             self.is_colliding = False
         if (self.x == self.simulation.xBorder or self.x == 0 or self.y == self.simulation.yBorder or self.y == 0):
             self.calculate_delta_xy()
-        if(self.stepX == 0 and self.stepY == 0):
+        if (self.stepX == 0 and self.stepY == 0):
             self.stepX = self.currentDeltaX
             self.stepY = self.currentDeltaY
         self.oldX = self.x
         self.oldY = self.y
-        if(self.stepX != 0):
-            if(self.stepX > 0):
+        if (self.stepX != 0):
+            if (self.stepX > 0):
                 self.move_right()
             else:
                 self.move_left()
         else:
-            if(self.stepY > 0):
+            if (self.stepY > 0):
                 self.move_down()
             else:
                 self.move_up()
@@ -106,7 +99,8 @@ class Particle:
         """this function increments the infectionCounter on the particle it is used on.
         IMPORTANT: it also uses side effects, as it is handling the recovery or death implicitly"""
         if self.state == constants.INFECTED:
-            if self.infectionCounter < random.randint(self.simulation.minDaysInfected * FRAMES_FOR_ONE_DAY, self.simulation.maxDaysInfected * FRAMES_FOR_ONE_DAY):
+            if self.infectionCounter < random.randint(self.simulation.minDaysInfected * constants.FRAMES_FOR_ONE_DAY,
+                                                      self.simulation.maxDaysInfected * constants.FRAMES_FOR_ONE_DAY):
                 self.infectionCounter += 1
             else:
                 if random.randint(0, 100) < self.simulation.deathRate:
@@ -119,32 +113,35 @@ class Particle:
                     else:
                         self.state = constants.HEALTHY
 
-
     def incrementImmuneCounter(self):
         """this function increment the immuneCounter on the particle it is used on"""
         if self.state == constants.IMMUNE:
-            # print(self.immuneCounter, "|", self.simulation.minImmuneDuration * FRAMES_FOR_ONE_DAY, "|", self.simulation.maxImmuneDuration * FRAMES_FOR_ONE_DAY)
-            if self.immuneCounter >= random.randint(self.simulation.minImmuneDuration * FRAMES_FOR_ONE_DAY, self.simulation.maxImmuneDuration * FRAMES_FOR_ONE_DAY):
+            if self.immuneCounter >= random.randint(self.simulation.minImmuneDuration * constants.FRAMES_FOR_ONE_DAY,
+                                                    self.simulation.maxImmuneDuration * constants.FRAMES_FOR_ONE_DAY):
                 self.state = constants.HEALTHY
                 self.immuneCounter = 0
             else:
                 self.immuneCounter += 1
 
     def detect_collisions(self, particle_list, infection_rate, infectionRadius):
-        """this function detects collisions between the particle it is used on and all of the particles in the given list.
-        Args:
-            particle_list: A list of particles to check collisions on
-            infection_rate: The rate of being infected while a collision occurs
-            infectionRadius: The radius in which collisions should be handled
+        """this function detects collisions between the particle it is used on and all of the particles in the given
+        list. Args: particle_list: A list of particles to check collisions on infection_rate: The rate of being
+        infected while a collision occurs infectionRadius: The radius in which collisions should be handled
         """
         if not self.isQuarantining:
             for j in range(0, len(particle_list)):
                 if not particle_list[j].isQuarantining:
-                    #if abs(self.x - particle_list[j].x) <= self.radius and abs(self.y - particle_list[j].y) <= self.radius and self != particle_list[j] and self.state != constants.DEAD and particle_list[j].state != constants.DEAD:
-                    if math.sqrt((self.x - particle_list[j].x)**2 + (self.y - particle_list[j].y)**2) <= self.dim and self != particle_list[j] and self.state != constants.DEAD and particle_list[j].state != constants.DEAD:
+                    if math.sqrt(
+                            (self.x - particle_list[j].x) ** 2 + (self.y - particle_list[j].y) ** 2) <= self.dim and \
+                            self != particle_list[j] and self.state != constants.DEAD and \
+                            particle_list[j].state != constants.DEAD:
                         self.is_colliding = True
                         particle_list[j].is_colliding = True
-                    if math.sqrt((self.x - particle_list[j].x)**2 + (self.y - particle_list[j].y)**2) <= infectionRadius and self != particle_list[j] and ((self.state == constants.HEALTHY and particle_list[j].state == constants.INFECTED) or (self.state == constants.INFECTED and particle_list[j].state == constants.HEALTHY)):  # and particleList[j].state == "infected"
+                    if math.sqrt((self.x - particle_list[j].x) ** 2 + (
+                            self.y - particle_list[j].y) ** 2) <= infectionRadius and self != particle_list[j] and (
+                            (self.state == constants.HEALTHY and particle_list[j].state == constants.INFECTED) or (
+                            self.state == constants.INFECTED and particle_list[
+                        j].state == constants.HEALTHY)):  # and particleList[j].state == "infected"
                         rndm = random.randint(1, 100)
                         if (rndm <= infection_rate):
                             if self.state == constants.HEALTHY:
@@ -152,14 +149,16 @@ class Particle:
                                 self.isQuarantining = random.randint(0, 100) <= self.simulation.quarantinePercentage
                             else:
                                 particle_list[j].state = constants.INFECTED
-                                particle_list[j].isQuarantining = random.randint(0, 100) <= self.simulation.quarantinePercentage
+                                particle_list[j].isQuarantining =\
+                                    random.randint(0, 100) <= self.simulation.quarantinePercentage
 
     def setParticleRadius(self, radius):
         """sets particles radius
 
         Args:
             radius: the radius that should be set"""
-        self.dim = 3 + radius
+        self.dim = constants.PARTICLE_DIMENSION + radius
 
     def vaccinate(self):
+        """sets particles state to constants.VACCINATED"""
         self.state = constants.VACCINATED

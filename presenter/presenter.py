@@ -1,20 +1,20 @@
 from PyQt5 import QtCore
 
 from view.view import View
-from view.dialogCSV import DialogCSV
 from model.simulation import Simulation
 
 import resources.constants as constants
 
 FPS = 60
 
+
 class Presenter(QtCore.QObject):
     """The presenter acts upon the model and the view. It retrieves data from the model (simulation), and formats it to display it in the view."""
+
     def __init__(self):
         super(Presenter, self).__init__()
         # create main window
         self.ui = View()
-        self.ui2 = DialogCSV()
         self.simulation = None
         self.isSimulationRunning = False
         self.isSimulationPaused = False
@@ -34,7 +34,10 @@ class Presenter(QtCore.QObject):
             self.simulation.performStep()
             self.ui.updateParticles(self.simulation.getParticles(), self.simulation.getData())
 
-    def startSimulation(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage, vaccinationActivated, vaccinationBegin, vaccinationSpeed, vaccinateHealthyFirst):
+    def startSimulation(self, xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles,
+                        infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected,
+                        quarantinePercentage, vaccinationActivated, vaccinationBegin, vaccinationSpeed,
+                        vaccinateHealthyFirst):
         """this function is used to initiate a simulation. It starts the simulation with the given arguments
         Args:
             xBorder: the maximum x-coordinate particles are allowed to move to the right
@@ -48,24 +51,34 @@ class Presenter(QtCore.QObject):
             initiallyInfected: the initial number of particles that are infected by the start of the simulation
             deathRate: the initially set death rate within the simulation
             minDaysInfected: the minimum of days particles have to be infected
-            maxDaysInfected the maximum of day particles can be infected up to
+            maxDaysInfected the maximum of days particles can be infected
             quarantinePercentage: the percentage of particles being in quarantine when infected
+            vaccinationActivated: whether vaccination is activated in the current simulation
+            vaccinationBegin: the start of vaccination in days
+            vaccinationSpeed: the count of particles being able to be vaccinated in one day
+            vaccinateHealthyFirst: whether the first one getting vaccinated are the healthy ones
         """
-        print("debug:", vaccinationSpeed)
         if countParticles < initiallyInfected:
             self.ui.showAlert(constants.PARTICLES_ALERT)
+        elif minDaysInfected > maxDaysInfected:
+            self.ui.showAlert(constants.INFECTION_MIN_OVER_MAX_ALERT)
+        elif minImmuneDuration > maxImmuneDuration:
+            self.ui.showAlert(constants.IMMUNE_MIN_OVER_MAX_ALERT)
         else:
             if self.isSimulationPaused:
                 self.resetSimulation()
             self.isSimulationRunning = True
-            self.simulation = Simulation(xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage, vaccinationActivated, vaccinationBegin, vaccinationSpeed, vaccinateHealthyFirst)
+            self.simulation = Simulation(xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration,
+                                         countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate,
+                                         minDaysInfected, maxDaysInfected, quarantinePercentage, vaccinationActivated,
+                                         vaccinationBegin, vaccinationSpeed, vaccinateHealthyFirst)
             self.ui.startSimulation()
             self.ui.resumeSimulation()
 
     def pauseResumeSimulation(self):
         """this function is used to pause or to resume the current simulation"""
         if self.simulation != None:
-            if(self.isSimulationPaused == False):
+            if (self.isSimulationPaused == False):
                 self.isSimulationRunning = False
                 self.isSimulationPaused = True
                 self.ui.pauseSimulation()
@@ -89,7 +102,7 @@ class Presenter(QtCore.QObject):
         Args:
             value: the new value by which factor to normal (1) the simulation has to be speed up
         """
-        self.timer.setInterval((1/value * 1000) / FPS)
+        self.timer.setInterval((1 / value * 1000) / FPS)
 
     def changeInfectionRate(self, infectionRate):
         """this function changes the infection rate of the current simulation
@@ -113,20 +126,20 @@ class Presenter(QtCore.QObject):
         Args:
             infectionRadius: the new infection radius
         """
-        if(self.simulation != None):
+        if (self.simulation != None):
             self.simulation.setinfectionRadius(infectionRadius)
 
     def export_csv(self):
-        """this function checks whether the simulation is running.
+        """this function checks whether the simulation is running or has never started.
         If not it is allowing the view to show its exportDialog.
         """
-        if(self.isSimulationPaused == True):
+        if (self.isSimulationPaused == True):
             self.ui.ask_granularity()
         else:
             if self.simulation:
-                self.ui.showAlert("Export bei laufender Simulation nicht möglich!")
+                self.ui.showAlert(constants.EXPORT_CSV_SIMULATION_RUNNING_ALERT)
             else:
-                self.ui.showAlert("Export bei noch nicht gestarteter Simulation nicht möglich!")
+                self.ui.showAlert(constants.EXPORT_CSV_NO_SIMULATION_ALERT)
 
     def changeStayAtHome(self):
         """this fucntion changes the current behaviour of simulating people are staying at home"""
@@ -147,7 +160,7 @@ class Presenter(QtCore.QObject):
             if self.simulation.maxDaysInfected >= minDaysInfected:
                 self.simulation.setMinDaysInfected(minDaysInfected)
             else:
-                self.ui.showAlert(constants.INFECTION_MIN_OVER_MAX_ALERT_MAX_ALERT)
+                self.ui.showAlert(constants.INFECTION_MIN_OVER_MAX_ALERT)
 
     def changeMaxDaysInfected(self, maxDaysInfected):
         """this function changes the maximum days particles are able to be infected in the current simulation
@@ -198,22 +211,50 @@ class Presenter(QtCore.QObject):
             self.simulation.setQuarantinePercentage(percentage)
 
     def startMultipleSimulations(self, simCount, simDuration, countParticles, initiallyInfected, infectionRate,
-                               infectionRadius, deathRate, minDaysInfected, maxDaysInfected, percentageImmune,
-                               minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage, vaccinationActivated, vaccinationDate, vaccinationSpeed, vaccinateHealthyFirst, dialog):
+                                 infectionRadius, deathRate, minDaysInfected, maxDaysInfected, percentageImmune,
+                                 minImmuneDuration, maxImmuneDuration, distanceRadius, quarantinePercentage,
+                                 vaccinationActivated, vaccinationDate, vaccinationSpeed, vaccinateHealthyFirst, dialog,
+                                 xBorder=0, yBorder=195):
+        """this function is used to initiate multiple simulations. It starts all of the simulations with the given
+        arguments
+        Args:
+            simCount: the count of simulations running simultaneously
+            simDuration: the count of days the simulations will be running
+            countParticles: the number of particles the simulation should hold
+            initiallyInfected: the initial number of particles that are infected by the start of the simulation
+            infectionRate: the initially set infection rate which with particles can infect each other
+            infectionRadius: the initially set infection radius, which is used to detect collisions of the particles
+            deathRate: the initially set death rate within the simulation
+            minDaysInfected: the minimum of days particles have to be infected
+            maxDaysInfected the maximum of days particles can be infected
+            percentageImmune: the percentage of being immune after recovery
+            minImmuneDuration: the minimum duration of being immune
+            maxImmuneDuration: the maximum duration of being immune
+            distanceRadius: the radius particles hold to each other to be on distance
+            quarantinePercentage: the percentage of particles being in quarantine when infected
+            vaccinationActivated: whether vaccination is activated in the current simulation
+            vaccinationDate: the start of vaccination in days
+            vaccinationSpeed: the count of particles being able to be vaccinated in one day
+            vaccinateHealthyFirst: whether the first one getting vaccinated are the healthy ones
+            dialog: the dialog for the presenter from where the call came
+            xBorder: the maximum x-coordinate particles are allowed to move to the right (default: 0)
+            yBorder: the maximum y-coordinate particles are allowed to move down (default: 195)
+        """
         self.simulations = []
+        self.d = dialog
         for i in range(0, simCount):
-            s = Simulation(0, 195, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles, infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected, maxDaysInfected, quarantinePercentage, vaccinationActivated, vaccinationDate, vaccinationSpeed, vaccinateHealthyFirst)
+            s = Simulation(xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles,
+                           infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected,
+                           maxDaysInfected, quarantinePercentage, vaccinationActivated, vaccinationDate,
+                           vaccinationSpeed, vaccinateHealthyFirst)
             s.changeParticleRadius(distanceRadius)
             self.simulations.append(s)
-        for i in range(0, simDuration*60):
+        for i in range(0, simDuration * FPS):
             data = []
             for j in range(0, len(self.simulations)):
                 self.simulations[j].performStep()
                 data.append(self.simulations[j].getData())
-                dialog.updateData(data)
-
-        for s in self.simulations:
-            print(s.getData()[-1])
+                self.d.updateData(data)
 
     def _connectUIElements(self) -> None:
         """this function is used to connect all of the signals between the view and the presenter"""
