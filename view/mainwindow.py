@@ -582,6 +582,8 @@ class Ui_MainWindow(object):
         self.actionShow_DistanceRadius = QtWidgets.QAction(MainWindow)
         self.actionShow_DistanceRadius.setCheckable(True)
         self.actionShow_DistanceRadius.setObjectName("actionShow_DistanceRadius")
+        self.actionSIRD_Modell = QtWidgets.QAction(MainWindow)
+        self.actionSIRD_Modell.setObjectName("actionSIRD_Modell")
         self.menuExport_CSV.addAction(self.actionExport_CSV)
         self.menuSimulation.addAction(self.actionMehrere_Simulationen_ausf_hren)
         self.menuDEBUG.addAction(self.actionShow_InfectionRadius)
@@ -632,5 +634,6 @@ class Ui_MainWindow(object):
         self.actionMehrere_Simulationen_ausf_hren.setText(_translate("MainWindow", "Mehrere Simulationen ausführen"))
         self.actionShow_InfectionRadius.setText(_translate("MainWindow", "Zeige Infektionsradius (Rot)"))
         self.actionShow_DistanceRadius.setText(_translate("MainWindow", "Zeige Abstandsradius (Magenta)"))
+        self.actionSIRD_Modell.setText(_translate("MainWindow", "SIRD-Modell"))
 
 from pyqtgraph import PlotWidget
