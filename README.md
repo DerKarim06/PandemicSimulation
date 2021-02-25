@@ -12,7 +12,7 @@ pip install requirements.txt
 python main.py
 ```
 
-![alt text](https://btn7k8.inf.uni-bayreuth.de/gitlab/praktikum2021/ai-1/karim/-/blob/aedfcdb67288f56be772ecb7122e6c331977b186/gui.png)
+![](gui.png)
 
 ## Usage
 
