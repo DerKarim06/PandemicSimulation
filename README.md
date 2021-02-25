@@ -12,11 +12,12 @@ pip install requirements.txt
 python main.py
 ```
 
-![](gui.png)
-
 ## Usage
 
 ## Standard simulation
+
+![](standardSim.png)
+
 There are different parameters that can be configured:
 
 **General parameters:**
@@ -50,6 +51,9 @@ There are different parameters that can be configured:
 - Quarantine percentage (percentage of infected particles that quarantine and therefore cannot infect others)
 
 ## Running multiple simulations
+
+![](multipleSim.png)
+
 There are different parameters that can be configured:
 
 **General parameters:**
