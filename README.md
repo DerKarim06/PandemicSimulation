@@ -12,9 +12,11 @@ pip install requirements.txt
 python main.py
 ```
 
-## Usage
+# Usage
 
 ## Standard simulation
+
+This can be used to simulate a pandemic with the given parameters. It is possible to see the progress live on the left with particles moving around and on the right with the statistical data being drawn on a graph.
 
 ![](standardSim.png)
 
@@ -51,6 +53,8 @@ There are different parameters that can be configured:
 - Quarantine percentage (percentage of infected particles that quarantine and therefore cannot infect others)
 
 ## Running multiple simulations
+
+As one simulation has a lot of probability variables in its process, it is safer to run multiple simulations to see an average in the pandemic progress across all of the simulations. With this option you can run multiple simulations and the results are displayed on different graphs. (WARNING: The processing can take a lot of time as there are multiple simulations processed. I.e. the standard configuration takes about 30 seconds to be processed.)
 
 ![](multipleSim.png)
 
