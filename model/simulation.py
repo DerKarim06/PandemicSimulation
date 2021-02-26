@@ -3,7 +3,6 @@ import random
 
 from model.particle import Particle
 
-
 import resources.constants as constants
 
 
@@ -90,7 +89,8 @@ class Simulation:
         l = 0
         m = 0
         n = 0
-        if self.vaccinationActivated: self.performVaccinations()
+        if self.vaccinationActivated:
+            self.performVaccinations()
         for i in range(0, len(self.particleList)):
             self.particleList[i].detect_collisions(self.particleList[i:], self.infectionRate, self.infectionRadius)
         for i in range(0, len(self.particleList)):
@@ -126,19 +126,22 @@ class Simulation:
             vaccinationCounter = 0
             if self.vaccinateHealthyFirst:
                 for i in range(0, len(self.particleList)):
-                    if vaccinationCounter >= self.vaccinationSpeed: break
+                    if vaccinationCounter >= self.vaccinationSpeed:
+                        break
                     if self.particleList[i].state == constants.HEALTHY:
                         self.particleList[i].vaccinate()
                         vaccinationCounter += 1
                 if vaccinationCounter < self.vaccinationSpeed:
                     for i in range(0, len(self.particleList)):
-                        if vaccinationCounter >= self.vaccinationSpeed: break
+                        if vaccinationCounter >= self.vaccinationSpeed:
+                            break
                         if self.particleList[i].state == constants.IMMUNE:
                             self.particleList[i].vaccinate()
                             vaccinationCounter += 1
             else:
                 for i in range(0, len(self.particleList)):
-                    if vaccinationCounter >= self.vaccinationSpeed: break
+                    if vaccinationCounter >= self.vaccinationSpeed:
+                        break
                     if self.particleList[i].state == constants.HEALTHY or \
                             self.particleList[i].state == constants.IMMUNE:
                         self.particleList[i].vaccinate()
@@ -219,7 +222,7 @@ class Simulation:
         """
         self.maxDaysInfected = maxDaysInfected
 
-    def setinfectionRadius(self, infectionRadius):
+    def setInfectionRadius(self, infectionRadius):
         """sets the simulations infection radius
         Args:
             infectionRadius: the new infection radius

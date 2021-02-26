@@ -1,6 +1,7 @@
 from PyQt5 import QtCore
 
 from view.view import View
+from model.sird import SIRD
 from model.simulation import Simulation
 
 import resources.constants as constants
@@ -15,6 +16,7 @@ class Presenter(QtCore.QObject):
         super(Presenter, self).__init__()
         # create main window
         self.ui = View()
+        self.dialog = None
         self.simulation = None
         self.isSimulationRunning = False
         self.isSimulationPaused = False
@@ -127,7 +129,7 @@ class Presenter(QtCore.QObject):
             infectionRadius: the new infection radius
         """
         if (self.simulation != None):
-            self.simulation.setinfectionRadius(infectionRadius)
+            self.simulation.setInfectionRadius(infectionRadius)
 
     def export_csv(self):
         """this function checks whether the simulation is running or has never started.
@@ -241,7 +243,7 @@ class Presenter(QtCore.QObject):
             yBorder: the maximum y-coordinate particles are allowed to move down (default: 195)
         """
         self.simulations = []
-        self.d = dialog
+        self.dialog = dialog
         for i in range(0, simCount):
             s = Simulation(xBorder, yBorder, percentageImmune, minImmuneDuration, maxImmuneDuration, countParticles,
                            infectionRate, infectionRadius, initiallyInfected, deathRate, minDaysInfected,
@@ -254,7 +256,25 @@ class Presenter(QtCore.QObject):
             for j in range(0, len(self.simulations)):
                 self.simulations[j].performStep()
                 data.append(self.simulations[j].getData())
-                self.d.updateData(data)
+            self.dialog.updateData(data)
+
+    def startSIRD(self, population, initiallyInfected, infectionRate, healthyRate, deathRate, days, dialog):
+        """this function start the sird model calculation and sends it to the dialog which started the process
+        Args:
+            population: the amount of particles for the simulation
+            initiallyInfected: the amount of initially infected particles from the population
+            infectionRate: the infection rate
+            healthyRate: the rate of being immune
+            deathRate: the rate of being dead after infection
+            days: the amount of days the simulation should process
+            dialog: the dialog that initiated the calculation
+        """
+        self.dialog = dialog
+        if initiallyInfected > population:
+            self.dialog.showAlert(constants.PARTICLES_ALERT)
+        else:
+            sird = SIRD(population, initiallyInfected, infectionRate, healthyRate, deathRate, days)
+            dialog.updateData(sird.getData())
 
     def _connectUIElements(self) -> None:
         """this function is used to connect all of the signals between the view and the presenter"""
@@ -276,3 +296,4 @@ class Presenter(QtCore.QObject):
         self.ui.minImmuneDurationSignal.connect(self.changeMinImmuneDuration)
         self.ui.quarantinePercentageSignal.connect(self.changeQuarantinePercentage)
         self.ui.multipleSimulationSignal.connect(self.startMultipleSimulations)
+        self.ui.sirdSignal.connect(self.startSIRD)

@@ -8,6 +8,7 @@ import pyqtgraph as pg
 
 from view.mainwindow import Ui_MainWindow
 from view.dialogCSV import DialogCSV
+from view.dialogSIRD import DialogSIRD
 from view.dialogMultipleSim import DialogMultipleSim
 
 import resources.constants as constants
@@ -36,6 +37,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     quarantinePercentageSignal = QtCore.pyqtSignal(int)
     multipleSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, int,
                                                  bool, int, int, bool, DialogMultipleSim)
+    sirdSignal = QtCore.pyqtSignal(int, int, float, float, float, int, DialogSIRD)
 
     def __init__(self):
         """creates the gui and therefore the view.
@@ -112,6 +114,15 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.spinBox_minImmuneDuration.valueChanged.connect(self.minImmuneDurationChanged)
         self.spinBox_quarantinePercentage.valueChanged.connect(self.quarantinePercentageChanged)
         self.actionMehrere_Simulationen_ausf_hren.triggered.connect(self.multipleSimDialog)
+        self.actionSIRD_Modell_2.triggered.connect(self.sirdModelClicked)
+
+    def sirdModelClicked(self):
+        self.d = DialogSIRD()
+        self.d.finishedSignal.connect(self.sendSIRD)
+        self.d.exec_()
+
+    def sendSIRD(self, population, initiallyInfected, infectionRate, healthyRate, deathRate, weeks, dialog):
+        self.sirdSignal.emit(population, initiallyInfected, infectionRate, healthyRate, deathRate, weeks, dialog)
 
     def quarantinePercentageChanged(self):
         """emits quarantinePercentageSignal with the value of spinBox_quarantinePercentage"""
@@ -365,7 +376,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                            particleList[i].y - ELLIPSIS_DIMENSION / 2 - self.spinBox_infectionRadius.value(),
                            self.spinBox_infectionRadius.value() * 2 + ELLIPSIS_DIMENSION,
                            self.spinBox_infectionRadius.value() * 2 + ELLIPSIS_DIMENSION), pen)
-            if self.actionShow_DistanceRadius.isChecked():
+            if self.actionShow_DistanceRadius.isChecked() and not particleList[i].state == constants.DEAD:
                 # draws a distance circle around particles for debugging purposes
                 scene.addEllipse(
                     QRectF(particleList[i].x - ELLIPSIS_DIMENSION / 2 - self.spinBox_distanceRadius.value(),

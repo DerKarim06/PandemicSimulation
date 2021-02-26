@@ -16,6 +16,7 @@ CONTINUE = "Weiter"
 ERROR = "Fehler!"
 COUNT_OF_PARTICLES = "Anzahl der Partikel"
 TIME_IN_SECONDS = "Zeit in Sekunden"
+TIME_IN_WEEKS = "Zeit in Wochen"
 FRAMES_FOR_ONE_DAY = 60
 MOVEMENT_RADIUS = 5
 PARTICLE_DIMENSION = 3
