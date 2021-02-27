@@ -90,6 +90,24 @@ There are different parameters that can be configured:
 - Distance radius (the amount of distance particles hold to each other)
 - Quarantine percentage (percentage of infected particles that quarantine and therefore cannot infect others)
 
+## Running a SIRD-model calculation
+
+The Susceptible-Infectious-Recovered-Deceased-Model differentiates between Recovered (meaning specifically individuals having survived the disease and now immune) and Deceased. See [The SIRD model](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIRD_model) for further information
+
+This dialog can be used to calculate a SIRD-model with the given parameters. This option can be used i.e. to check how the pandemic would turn out with a realistic mathematical-epidemiological model calculation.
+
+
+![](SIRD.png)
+
+There are different parameters that can be configured:
+
+- population (self explanatory)
+- Number of initial infected people (self explanatory)
+- infection rate(self explanatory)
+- rate of recovery (rate of becoming recovered after infection)
+- death rate (self explanatory)
+- time steps (given in days and will be displayed in weeks)
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
