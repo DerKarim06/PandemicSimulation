@@ -42,7 +42,6 @@ class Particle:
         if self.y == 195:
             self.y -= 1
 
-    #
     def move(self):
         """this function moves a particle in a random direction. It uses the stepsize: 1"""
         if self.isQuarantining:
@@ -125,8 +124,12 @@ class Particle:
 
     def detect_collisions(self, particle_list, infection_rate, infectionRadius):
         """this function detects collisions between the particle it is used on and all of the particles in the given
-        list. Args: particle_list: A list of particles to check collisions on infection_rate: The rate of being
-        infected while a collision occurs infectionRadius: The radius in which collisions should be handled
+        list.
+
+        Args:
+            particle_list: A list of particles to check collisions on
+            infection_rate: The rate of being infected while a collision occurs
+            infectionRadius: The radius in which collisions should be handled
         """
         if not self.isQuarantining:
             for j in range(0, len(particle_list)):

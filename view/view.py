@@ -117,11 +117,13 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionSIRD_Modell_2.triggered.connect(self.sirdModelClicked)
 
     def sirdModelClicked(self):
+        """this function creates and shows the dialog for the SIRD-model. It also connect its signal with sendSIRD"""
         self.d = DialogSIRD()
         self.d.finishedSignal.connect(self.sendSIRD)
         self.d.exec_()
 
     def sendSIRD(self, population, initiallyInfected, infectionRate, healthyRate, deathRate, weeks, dialog):
+        """emits sirdSignal with population, initiallyInfected, infectionRate, healthyRate, deathRate, weeks, dialog"""
         self.sirdSignal.emit(population, initiallyInfected, infectionRate, healthyRate, deathRate, weeks, dialog)
 
     def quarantinePercentageChanged(self):
@@ -228,7 +230,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         """function to export a csv file of the gathered data within the simulation. The function opens
         a FileDialog for the user to enter a path to save the csv file"""
         name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
-        print(name[0])
         csvMatrix = np.array(
             [self.dataX, self.dataHealthy, self.dataImmune, self.dataInfected, self.dataDead, self.dataVaccinated]).T
         np.savetxt(name[0], csvMatrix[0::granularity], delimiter=",", fmt='%i', header=constants.CSV_HEADER)

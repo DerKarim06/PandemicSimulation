@@ -1,3 +1,5 @@
+# this file holds all of the constants
+
 INFECTION_MAX_UNDER_MIN_ALERT = "Die maximale Infektionsdauer kann nicht unter der minimalen Infektionsdauer liegen!"
 INFECTION_MIN_OVER_MAX_ALERT = "Die minimale Infektionsdauer kann nicht über der maximalen Infektionsdauer liegen!"
 IMMUNE_MIN_OVER_MAX_ALERT = "Die minimale Dauer der Immunität kann nicht über der maximalen Dauer liegen!"

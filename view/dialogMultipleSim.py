@@ -6,11 +6,6 @@ import pyqtgraph as pg
 from view.dialogwindowMultipleSim import Ui_Dialog
 import resources.constants as constants
 
-# define some random colors for the different graphs
-COLORS = [(255, 0, 0), (255, 255, 0), (255, 0, 255), (0, 255, 0), (0, 255, 255), (0, 0, 255), (142, 80, 33),
-          (15, 178, 56), (45, 76, 41), (98, 213, 145), (145, 100, 246), (27, 164, 60)]
-
-
 class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
     finishedSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, int, int, int, int, int, int, bool, int,
                                        int, bool, Ui_Dialog)
@@ -148,7 +143,7 @@ class DialogMultipleSim(QtWidgets.QDialog, Ui_Dialog):
             self.dataDead.append([])
             self.dataImmune.append([])
             self.dataVaccinated.append([])
-            self.colors.append(random.randint(0, len(COLORS) - 1))
+            self.colors.append(random.randint(0, 12))
             self.plots[0].append(self.graphWidget_Healthy.plot(self.dataX, self.dataHealthy[i],
                                                                pen=pg.mkPen(color=self.colors[i], width=3)))
             self.plots[1].append(self.graphWidget_Infected.plot(self.dataX, self.dataInfected[i],
