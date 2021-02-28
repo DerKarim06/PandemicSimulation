@@ -69,6 +69,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # sets a counter
         self.counter = 0
+        self.simIsRunning = False
 
         # setup the data
         self.dataX = []
@@ -118,6 +119,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def sirdModelClicked(self):
         """this function creates and shows the dialog for the SIRD-model. It also connect its signal with sendSIRD"""
+        if self.simIsRunning == True:
+            self.pauseSimulationClicked()
         self.d = DialogSIRD()
         self.d.finishedSignal.connect(self.sendSIRD)
         self.d.exec_()
@@ -236,6 +239,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def multipleSimDialog(self):
         """this function opens the multiple simulations dialog"""
+        if self.simIsRunning == True:
+            self.pauseSimulationClicked()
         self.d = DialogMultipleSim()
         self.d.finishedSignal.connect(self.runMultipleSimulations)
         self.d.exec_()
@@ -289,6 +294,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def pauseSimulation(self):
         """this function changes the text of pauseSimButton to Weiter"""
         self.pauseSimButton.setText(constants.CONTINUE)
+        self.simIsRunning = False
 
     def startSimulation(self):
         """this function clears the graphWidget and initiates arrays that hold the data while the simulation is
@@ -313,33 +319,40 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotVaccinated = self.graphWidget.plot(self.dataX, self.dataVaccinated,
                                                     pen=pg.mkPen(color=(0, 0, 255), width=3),
                                                     name=constants.VACCINATED_NAME)
+        self.simIsRunning = True
 
     def resumeSimulation(self):
         """this function changes the text of pauseSimButton to Pause"""
         self.pauseSimButton.setText(constants.PAUSE)
+        self.simIsRunning = True
 
     def resetSimulation(self):
         """this function resets the simulation by clearing the scene and the graphWidget and reinitialising the data"""
-        self.graphicsView.scene().clear()
-        self.graphWidget.clear()
-        self.dataDead = []
-        self.dataHealthy = []
-        self.dataInfected = []
-        self.dataX = []
-        self.dataImmune = []
-        self.graphWidget.addLegend()
-        self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected,
+        if self.counter != 0:
+            self.graphicsView.scene().clear()
+            self.graphWidget.clear()
+            self.dataDead = []
+            self.dataHealthy = []
+            self.dataInfected = []
+            self.dataX = []
+            self.dataImmune = []
+            self.graphWidget.addLegend()
+            self.plotInfected = self.graphWidget.plot(self.dataX, self.dataInfected,
                                                   pen=pg.mkPen(color=(255, 0, 0), width=3),
                                                   name=constants.INFECTED_NAME)
-        self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy, pen=pg.mkPen(color=(0, 255, 0), width=3),
-                                                 name=constants.HEALTHY_NAME)
-        self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead, pen=pg.mkPen(color=(255, 255, 255), width=3),
-                                              name=constants.DEAD_NAME)
-        self.plotImmune = self.graphWidget.plot(self.dataX, self.dataImmune, pen=pg.mkPen(color=(255, 255, 0), width=3),
-                                                name=constants.IMMUNE_NAME)
-        self.plotVaccinated = self.graphWidget.plot(self.dataX, self.dataVaccinated,
+            self.plotHealthy = self.graphWidget.plot(self.dataX, self.dataHealthy,
+                                                     pen=pg.mkPen(color=(0, 255, 0), width=3),
+                                                     name=constants.HEALTHY_NAME)
+            self.plotDead = self.graphWidget.plot(self.dataX, self.dataDead,
+                                                  pen=pg.mkPen(color=(255, 255, 255), width=3),
+                                                  name=constants.DEAD_NAME)
+            self.plotImmune = self.graphWidget.plot(self.dataX, self.dataImmune,
+                                                    pen=pg.mkPen(color=(255, 255, 0), width=3),
+                                                    name=constants.IMMUNE_NAME)
+            self.plotVaccinated = self.graphWidget.plot(self.dataX, self.dataVaccinated,
                                                     pen=pg.mkPen(color=(0, 0, 255), width=3),
                                                     name=constants.VACCINATED_NAME)
+            self.simIsRunning = False
 
     # function visualizes the data from the simulation model in a graphicsview. It uses a new scene for every step.
     def updateParticles(self, particleList, data):
