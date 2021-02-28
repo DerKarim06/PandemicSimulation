@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
-    <height>948</height>
+    <width>1392</width>
+    <height>1110</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,18 +62,9 @@ QRadioButton::indicator::unchecked, QCheckBox::indicator::unchecked {
 	background: none;
 }
 
-QRadioButton::indicator:unchecked:hover, QCheckBox::indicator:unchecked:hover {
-	border: 1px solid #DDDDDD;
-}
-
 QRadioButton::indicator::checked, QCheckBox::indicator::checked {
 	border: 1px solid #5A5A5A;
-	background: #5A5A5A;
-}
-
-QRadioButton::indicator:checked:hover, QCheckBox::indicator:checked:hover {
-	border: 1px solid #DDDDDD;
-	background: #DDDDDD;
+	background: #3D7848;
 }
 
 QGroupBox {
@@ -258,7 +249,7 @@ QSlider::groove:vertical {
 
 QSlider::handle {
 	border: 1px solid #5A5A5A;
-	background: #353535;
+	background: #808080;
 }
 
 QSlider::handle:horizontal {
@@ -276,7 +267,7 @@ QSlider::add-page:vertical, QSlider::sub-page:horizontal {
 }
 
 QSlider::sub-page:vertical, QSlider::add-page:horizontal {
-	background: #353535;
+	background: #808080;
 }
 
 QLabel {
@@ -301,24 +292,47 @@ QMenu::separator {
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <pointsize>30</pointsize>
-         </font>
+       <layout class="QHBoxLayout" name="horizontalLayout_19">
+        <property name="rightMargin">
+         <number>250</number>
         </property>
-        <property name="text">
-         <string>Pandemiesimulator</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="label_logo">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap>../../../../../Downloads/icons8-virus-100.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_header">
+          <property name="font">
+           <font>
+            <pointsize>30</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pandemiesimulator&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QGraphicsView" name="graphicsView_2">
+         <widget class="QGraphicsView" name="graphicsView">
           <property name="styleSheet">
            <string notr="true"/>
           </property>
@@ -332,13 +346,6 @@ QMenu::separator {
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
            <string>Allgemeine Einstellungen</string>
@@ -349,14 +356,14 @@ QMenu::separator {
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_9">
                <item>
-                <widget class="QLabel" name="label_3">
+                <widget class="QLabel" name="label_particlesAmount">
                  <property name="text">
-                  <string>Anzahl Partikel:</string>
+                  <string>Anzahl der Partikel:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox">
+                <widget class="QSpinBox" name="spinBox_particlesAmount">
                  <property name="maximum">
                   <number>500</number>
                  </property>
@@ -367,30 +374,30 @@ QMenu::separator {
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_10">
                <item>
-                <widget class="QLabel" name="label_12">
+                <widget class="QLabel" name="label_initiallyInfected">
                  <property name="text">
-                  <string>Anzahl der bereits kranke Partikeln:</string>
+                  <string>Anzahl der bereits kranken Partikel:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox_5"/>
+                <widget class="QSpinBox" name="spinBox_initiallyInfected"/>
                </item>
               </layout>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_15">
                <item>
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel" name="label_speed">
                  <property name="text">
                   <string>Geschwindigkeit:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_17">
+                <widget class="QLabel" name="label_speedFactor">
                  <property name="text">
-                  <string>x2</string>
+                  <string>x1</string>
                  </property>
                 </widget>
                </item>
@@ -431,14 +438,14 @@ QMenu::separator {
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_11">
                <item>
-                <widget class="QLabel" name="label_6">
+                <widget class="QLabel" name="label_infectionRate">
                  <property name="text">
                   <string>Infektionsrate (in Prozent):</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox_2">
+                <widget class="QSpinBox" name="spinBox_infectionRate">
                  <property name="maximum">
                   <number>100</number>
                  </property>
@@ -449,52 +456,171 @@ QMenu::separator {
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
-                <widget class="QLabel" name="label_7">
+                <widget class="QLabel" name="label_infectionRadius">
                  <property name="text">
-                  <string>Infektionsradius</string>
+                  <string>Infektionsradius:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox_3">
+                <widget class="QSpinBox" name="spinBox_infectionRadius">
                  <property name="maximum">
                   <number>100</number>
                  </property>
                 </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_14">
-               <item>
-                <widget class="QLabel" name="label_11">
-                 <property name="text">
-                  <string>durchschnittliche Infektionsdauer (in Tagen):</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QSpinBox" name="spinBox_6"/>
                </item>
               </layout>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_12">
                <item>
-                <widget class="QLabel" name="label_8">
+                <widget class="QLabel" name="label_deathRate">
                  <property name="text">
                   <string>Sterberate (in Prozent):</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox_4">
+                <widget class="QSpinBox" name="spinBox_deathRate">
                  <property name="maximum">
                   <number>100</number>
                  </property>
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_20">
+               <item>
+                <widget class="QLabel" name="label_minInfectionDuration">
+                 <property name="text">
+                  <string>minimale Infektionsdauer (in Tagen):</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="spinBox_minInfectionDuration"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_21">
+               <item>
+                <widget class="QLabel" name="label_maxInfectionDuration">
+                 <property name="text">
+                  <string>maximale Infektionsdauer (in Tagen):</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="spinBox_maxInfectionDuration"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="QLabel" name="label_percentageImmune">
+                 <property name="text">
+                  <string>Anteil der Immunen nach Genesung (in Prozent):</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="spinBox_percentageImmune"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item>
+                <widget class="QLabel" name="label_minImmuneDuration">
+                 <property name="text">
+                  <string>minimale Dauer der Immunität (in Tagen):</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="spinBox_minImmuneDuration"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QLabel" name="label_maxImmuneDuration">
+                 <property name="text">
+                  <string>maximale Dauer der Immunität (in Tagen):</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="spinBox_maxImmuneDuration"/>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>Impfbezogene Einstellungen</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_22">
+             <item>
+              <widget class="QCheckBox" name="checkBox_activateVaccination">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktiviere den Einsatz eines Impfstoffes (Es wird davon ausgegangen, dass geimpfte permanent immun sind)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Impfstoff aktivieren</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QLabel" name="label_dateForVaccine">
+               <property name="text">
+                <string>Ab diesem Zeitpunkt steht
+ein Impfstoff zu Verfügung:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBox_dateForVaccine"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QLabel" name="label_vaccineSpeed">
+               <property name="text">
+                <string>Impfgeschwindigkeit (Partikel pro Tag):</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBox_vaccineSpeed"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <item>
+              <widget class="QCheckBox" name="checkBox_healthyFirstVaccinated">
+               <property name="text">
+                <string>Gesunde werden vor den Immunen geimpft</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -504,7 +630,7 @@ QMenu::separator {
         <item>
          <widget class="QGroupBox" name="groupBox_3">
           <property name="title">
-           <string>GroupBox</string>
+           <string>Bewegungsbezogene Einstellungen</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>
@@ -512,12 +638,39 @@ QMenu::separator {
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
-                <widget class="QCheckBox" name="checkBox">
+                <widget class="QCheckBox" name="checkBox_peopleStayAtHome">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="layoutDirection">
                   <enum>Qt::LeftToRight</enum>
                  </property>
+                 <property name="styleSheet">
+                  <string notr="true">QCheckBox::indicator {
+color: black;
+}
+QCheckBox::indicator {
+background: url(...);
+}
+QCheckBox::indicator:hover {
+background: url(...);
+}
+QCheckBox::indicator:checked {
+background: #3D7848;
+}
+QCheckBox::indicator:pressed {
+background: url(...);
+}
+
+QCheckBox::indicator:hover:checked {
+background: url(...);
+}</string>
+                 </property>
                  <property name="text">
-                  <string>People staying at home</string>
+                  <string>Menschen bleiben zuhause</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -526,28 +679,28 @@ QMenu::separator {
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_17">
                <item>
-                <widget class="QLabel" name="label_10">
+                <widget class="QLabel" name="label_distanceRadius">
                  <property name="text">
-                  <string>Platzhalter</string>
+                  <string>Eingehaltener Abstandsradius:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox_7"/>
+                <widget class="QSpinBox" name="spinBox_distanceRadius"/>
                </item>
               </layout>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_18">
                <item>
-                <widget class="QLabel" name="label_9">
+                <widget class="QLabel" name="label_quarantinePercentage">
                  <property name="text">
-                  <string>Platzhalter</string>
+                  <string>Anteil der Quarantäneeinhaltung (in Prozent):</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox_8"/>
+                <widget class="QSpinBox" name="spinBox_quarantinePercentage"/>
                </item>
               </layout>
              </item>
@@ -556,184 +709,24 @@ QMenu::separator {
           </layout>
          </widget>
         </item>
-        <item>
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <item>
-         <spacer name="horizontalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
-        <item>
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_9"/>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_7">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_14">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_10"/>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_8">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_15">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_11"/>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_9">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_16">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_12"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Parameter 1</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Parameter 1</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider_4">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QPushButton" name="startSimButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>50</height>
+           </size>
+          </property>
           <property name="text">
            <string>Start</string>
           </property>
@@ -741,6 +734,12 @@ QMenu::separator {
         </item>
         <item>
          <widget class="QPushButton" name="pauseSimButton">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>50</height>
+           </size>
+          </property>
           <property name="text">
            <string>Pause</string>
           </property>
@@ -748,6 +747,12 @@ QMenu::separator {
         </item>
         <item>
          <widget class="QPushButton" name="resetSimButton">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>50</height>
+           </size>
+          </property>
           <property name="text">
            <string>Reset</string>
           </property>
@@ -764,7 +769,7 @@ QMenu::separator {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>884</width>
+     <width>1392</width>
      <height>23</height>
     </rect>
    </property>
@@ -774,12 +779,59 @@ QMenu::separator {
     </property>
     <addaction name="actionExport_CSV"/>
    </widget>
+   <widget class="QMenu" name="menuSimulation">
+    <property name="title">
+     <string>Simulation</string>
+    </property>
+    <addaction name="actionMehrere_Simulationen_ausf_hren"/>
+    <addaction name="actionSIRD_Modell_2"/>
+   </widget>
+   <widget class="QMenu" name="menuDEBUG">
+    <property name="title">
+     <string>DEBUG</string>
+    </property>
+    <addaction name="actionShow_InfectionRadius"/>
+    <addaction name="actionShow_DistanceRadius"/>
+   </widget>
    <addaction name="menuExport_CSV"/>
+   <addaction name="menuSimulation"/>
+   <addaction name="menuDEBUG"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionExport_CSV">
    <property name="text">
-    <string>Export CSV</string>
+    <string>CSV exportieren</string>
+   </property>
+  </action>
+  <action name="actionMehrere_Simulationen_ausf_hren">
+   <property name="text">
+    <string>Mehrere Simulationen ausführen</string>
+   </property>
+  </action>
+  <action name="actionShow_InfectionRadius">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Zeige Infektionsradius (Rot)</string>
+   </property>
+  </action>
+  <action name="actionShow_DistanceRadius">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Zeige Abstandsradius (Magenta)</string>
+   </property>
+  </action>
+  <action name="actionSIRD_Modell">
+   <property name="text">
+    <string>SIRD-Modell</string>
+   </property>
+  </action>
+  <action name="actionSIRD_Modell_2">
+   <property name="text">
+    <string>SIRD-Modell</string>
    </property>
   </action>
  </widget>
@@ -791,6 +843,8 @@ QMenu::separator {
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="pandemie.qrc"/>
+ </resources>
  <connections/>
 </ui>
