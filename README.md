@@ -18,7 +18,7 @@ python main.py
 
 This can be used to simulate a pandemic with the given parameters. It is possible to see the progress live on the left with particles moving around and on the right with the statistical data being drawn on a graph.
 
-![](standardSim.png)
+![](resources/standardSim.png)
 
 There are different parameters that can be configured:
 
@@ -56,7 +56,7 @@ There are different parameters that can be configured:
 
 As one simulation has a lot of probability variables in its process, it is safer to run multiple simulations to see an average in the pandemic progress across all of the simulations. With this option you can run multiple simulations and the results are displayed on different graphs. (WARNING: The processing can take a lot of time as there are multiple simulations processed. I.e. the standard configuration takes about 30 seconds to be processed.)
 
-![](multipleSim.png)
+![](resources/multipleSim.png)
 
 There are different parameters that can be configured:
 
@@ -97,7 +97,7 @@ The Susceptible-Infectious-Recovered-Deceased-Model differentiates between Recov
 This dialog can be used to calculate a SIRD-model with the given parameters. This option can be used i.e. to check how the pandemic would turn out with a realistic mathematical-epidemiological model calculation.
 
 
-![](SIRD.png)
+![](resources/SIRD.png)
 
 There are different parameters that can be configured:
 
